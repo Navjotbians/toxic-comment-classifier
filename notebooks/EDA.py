@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[86]:
+# In[1]:
 
 
 import numpy as np
@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import re
 import string
+import nltk
 
 
 # In[2]:
@@ -18,17 +19,17 @@ import string
 df = pd.read_csv('../Input/train.csv')
 
 
-# In[68]:
+# In[3]:
 
 
 print("Number of rows in data =",df.shape[0])
 print("Number of columns in data =",df.shape[1])
 print("\n")
 print("Sample data:")
-df.head(2400)
+df.head()
 
 
-# In[9]:
+# In[4]:
 
 
 df.isnull().sum()
@@ -36,13 +37,13 @@ df.isnull().sum()
 
 # <br>No null values in the dataset
 
-# In[69]:
+# In[5]:
 
 
 df.comment_text[2372]
 
 
-# In[125]:
+# In[6]:
 
 
 non_toxic = len(df[(df['toxic']==0) & (df['severe_toxic']==0) & (df['obscene']==0) & (df['threat']== 0) & (df['insult']==0) & (df['identity_hate']==0)])
@@ -57,7 +58,7 @@ print('Percentage of toxic comments: {}'.format(toxic / len(df)*100))
 
 # #### Number of comments in each category
 
-# In[10]:
+# In[7]:
 
 
 ##df.iloc[:,2:].sum()
@@ -70,7 +71,7 @@ df_stats = pd.DataFrame(counts, columns=['category', 'number_of_comments'])
 df_stats
 
 
-# In[11]:
+# In[8]:
 
 
 levels = list(df_toxic.columns.values)
@@ -90,15 +91,15 @@ plt.show()
 
 # #### Number of comments have multi-labels
 
-# In[12]:
+# In[9]:
 
 
 rowSums = df_toxic.iloc[:,:].sum(axis=1)
 x= rowSums.value_counts().iloc[1:]
-print("Percentage of comments with multi-labels : \n{}".format((x/toxic)*100))
+print("Percentage of comments with multi-labels : \n{} ".format((x/toxic)*100))
 
 
-# In[13]:
+# In[10]:
 
 
 ax = sns.barplot(x.index, x.values)
@@ -114,13 +115,13 @@ plt.show()
 
 # #### All severe_toxic comments are also by default gets toxic label
 
-# In[14]:
+# In[11]:
 
 
 print('Total number of comments labeled as toxic are: {}\n Total number of severe toxic comments are: {}'.format(df['toxic'].sum(), df['severe_toxic'].sum())) 
 
 
-# In[15]:
+# In[12]:
 
 
 # Dataframe that contains all the comments that are labeled as a severe toxic comments
@@ -128,14 +129,14 @@ df1 = df[df['severe_toxic']==1]
 df1.head()
 
 
-# In[16]:
+# In[13]:
 
 
 # Can be seen all the comments which are severe_toxic are labeled as toxic comments 
 (df1.severe_toxic == df1.toxic).sum()
 
 
-# In[17]:
+# In[14]:
 
 
 pd.crosstab(df.toxic,df.severe_toxic,margins=True).style.background_gradient(cmap='Set3')
@@ -143,7 +144,7 @@ pd.crosstab(df.toxic,df.severe_toxic,margins=True).style.background_gradient(cma
 
 # <br>All the Severe toxic comments are also toxic
 
-# In[18]:
+# In[15]:
 
 
 pd.crosstab(df.toxic,df.obscene,margins=True).style.background_gradient(cmap='Set3')
@@ -156,25 +157,25 @@ pd.crosstab(df.toxic,df.obscene,margins=True).style.background_gradient(cmap='Se
 # <br> what is the explanation for that?
 # 
 
-# In[119]:
+# In[16]:
 
 
 pd.crosstab(df.obscene,df.toxic,margins=True).style.background_gradient(cmap='Set3')
 
 
-# In[22]:
+# In[17]:
 
 
 df_obs = df[df['obscene']== 1]
 
 
-# In[31]:
+# In[18]:
 
 
 df2 = df[(df['toxic']== 0) & (df['obscene']== 1)]
 
 
-# In[120]:
+# In[19]:
 
 
 df.comment_text[2897]
@@ -185,13 +186,13 @@ df.comment_text[2897]
 # But it can't be said with confidence because the comment with ID 2897 contradicts it. In my understanding this has to be labeled as toxic as well.
 # 
 
-# In[116]:
+# In[20]:
 
 
 pd.crosstab(df.obscene,df.severe_toxic,margins=True).style.background_gradient(cmap='Set3')
 
 
-# In[70]:
+# In[21]:
 
 
 pd.crosstab(df.toxic,df.threat,margins=True).style.background_gradient(cmap='Set3')
@@ -202,13 +203,13 @@ pd.crosstab(df.toxic,df.threat,margins=True).style.background_gradient(cmap='Set
 # <br> It can be seen from the training dataset that these 29 comments have these common words "kill", "die", "warning" but no vulgar or insulting words are used. This could be the reason that these 29 comments qualify for threat label but not for toxic.
 # 
 
-# In[71]:
+# In[22]:
 
 
 pd.crosstab(df.toxic,df.insult,margins=True).style.background_gradient(cmap='Set3')
 
 
-# In[121]:
+# In[23]:
 
 
 pd.crosstab(df.toxic,df.identity_hate,margins=True).style.background_gradient(cmap='Set3')
@@ -225,48 +226,3 @@ pd.crosstab(df.toxic,df.identity_hate,margins=True).style.background_gradient(cm
 # <br>Insult - 
 # <br>Identity_hate - 
 #  
-
-# ## Data Pre-processing
-
-# In[79]:
-
-
-
-
-
-# In[80]:
-
-
-
-
-
-# In[81]:
-
-
-
-
-
-# In[83]:
-
-
-
-
-
-# In[22]:
-
-
-
-
-
-# In[131]:
-
-
-
-    
-
-
-# In[132]:
-
-
-
-
