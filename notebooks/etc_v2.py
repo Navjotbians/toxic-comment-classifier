@@ -16,18 +16,17 @@ import string
 import operator
 
 
-# In[107]:
+# In[2]:
 
 
 import matplotlib.pyplot as plt
 
 
-# In[108]:
+# In[3]:
 
 
 # nltk.download('punkt')
-# 
-nltk.download('stopwords')
+# nltk.download('stopwords')
 
 
 # In[109]:

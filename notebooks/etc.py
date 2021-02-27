@@ -25,7 +25,8 @@ import matplotlib.pyplot as plt
 # In[3]:
 
 
-nltk.download('punkt')
+# nltk.download('punkt')
+# 
 nltk.download('stopwords')
 
 

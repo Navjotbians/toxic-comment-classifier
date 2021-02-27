@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[1]:
+# In[23]:
 
 
 import numpy as np
@@ -16,26 +16,26 @@ import operator
 from sklearn import feature_extraction,model_selection,naive_bayes,pipeline,manifold,preprocessing
 
 
-# In[2]:
+# In[24]:
 
 
 # import sys
 # print(sys.getrecursionlimit()))
 
 
-# In[3]:
+# In[25]:
 
 
 # sys.setrecursionlimit(5000)
 
 
-# In[4]:
+# In[26]:
 
 
-df = pd.read_csv('../Input/train.csv')
+df = pd.read_csv('../data/raw/train.csv')
 
 
-# In[5]:
+# In[27]:
 
 
 ### data cleaner function
@@ -60,14 +60,14 @@ def clean(input_str):
     return input_str
 
 
-# In[6]:
+# In[29]:
 
 
 ### Frequently used words in the obscene comments
-def make_dict(d, stemm = False,lemm = True):
+def make_dic(dd, stemm = False,lemm = True):
     #all_word = []
         ### Clean input data
-    processed_text = clean(d)
+    processed_text = cldan(d)
         ### Tokenization
     processed_text = word_tokenize(processed_text)
      ### remove stop words
@@ -91,7 +91,7 @@ def make_dict(d, stemm = False,lemm = True):
     
 
 
-# In[7]:
+# In[31]:
 
 
 input_str = df.comment_text[2]
@@ -101,14 +101,104 @@ make_dict(input_str, stemm= True)
 
 # ## Append the clean comments in the dataset
 
-# In[8]:
+# In[32]:
 
 
 # df['clean_comment'] = df['comment_text'].apply(lambda x:make_dict(x, stemm= True))
 
 
-# In[28]:
+# In[33]:
 
 
 #df.head(20)
+
+
+# #### Reading the processed data
+
+# In[34]:
+
+
+df = pd.read_csv('../data/processed/processed_data.csv')
+
+
+# In[35]:
+
+
+### dropping the original unclean comment coloum from dataset
+df = df.drop('comment_text', axis = 1)
+
+
+# In[36]:
+
+
+### Renaming the clean comment colum to comment_text for ease
+df = df.rename({'clean_comment': 'comment_text'}, axis=1)
+
+
+# In[37]:
+
+
+df.head()
+
+
+# ### Bag of Words
+
+# In[60]:
+
+
+df_threat = df[df['threat'] == 1]
+#Reseting the index
+df_threat.set_index(['id'], inplace = True)
+df_threat.reset_index(level =['id'], inplace = True)
+
+
+# In[69]:
+
+
+corpus = df_threat['comment_text']
+
+
+# In[70]:
+
+
+bw_vectorizer = feature_extraction.text.CountVectorizer(max_features= 100)
+
+
+# In[85]:
+
+
+X = bw_vectorizer.fit_transform(corpus).toarray()
+X.shape
+
+
+# In[83]:
+
+
+X[0]
+
+
+# #### TF -IDF
+
+# In[92]:
+
+
+tf_vectorizer = feature_extraction.text.TfidfVectorizer(max_features=100)
+
+
+# In[93]:
+
+
+X1 = tf_vectorizer.fit_transform(corpus).toarray()
+
+
+# In[94]:
+
+
+X1.shape
+
+
+# In[96]:
+
+
+X1[0]
 
