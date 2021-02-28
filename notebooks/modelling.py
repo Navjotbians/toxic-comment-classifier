@@ -5,7 +5,7 @@
 
 # #### Import all the required packages
 
-# In[113]:
+# In[127]:
 
 
 import pandas as pd
@@ -18,40 +18,40 @@ from sklearn.metrics import accuracy_score
 
 # #### load processed dataset
 
-# In[ ]:
+# In[128]:
 
 
 df = pd.read_csv('../data/processed/processed_data.csv')
 
 
-# In[ ]:
+# In[129]:
 
 
 ### dropping the original unclean comment coloum from dataset
 df = df.drop('comment_text', axis = 1)
 
 
-# In[ ]:
+# In[130]:
 
 
 ### Renaming the clean comment colum to comment_text for ease
 df = df.rename({'clean_comment': 'comment_text'}, axis=1)
 
 
-# In[ ]:
+# In[131]:
 
 
 df.head()
 
 
-# In[ ]:
+# In[132]:
 
 
 ### fill NA for any missing data 
 df['comment_text'].fillna("missing", inplace=True)
 
 
-# In[ ]:
+# In[133]:
 
 
 labels = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
@@ -60,19 +60,19 @@ corpus = df['comment_text']
 
 # ### Split the date into train test datasets
 
-# In[ ]:
+# In[134]:
 
 
 X_train, X_test, y_train, y_test = model_selection.train_test_split(corpus,df[labels],test_size=0.25,random_state=42)
 
 
-# In[ ]:
+# In[135]:
 
 
 X_train.shape, X_test.shape
 
 
-# In[ ]:
+# In[136]:
 
 
 # Stats of X_train labels
@@ -83,7 +83,7 @@ df_stats = pd.DataFrame(counts, columns=['Labels', 'number_of_comments'])
 df_stats
 
 
-# In[ ]:
+# In[137]:
 
 
 #stats of X_test labels
@@ -96,7 +96,7 @@ df_stats
 
 # #### Converting text comments into vectors using bag of words or TF-IDF 
 
-# In[ ]:
+# In[138]:
 
 
 def word_embeddings(X_train, X_test, embedding_type = "tfidf"):
@@ -111,7 +111,7 @@ def word_embeddings(X_train, X_test, embedding_type = "tfidf"):
     return X_train, X_test
 
 
-# In[ ]:
+# In[139]:
 
 
 Xv_train, Xv_test = word_embeddings(X_train, X_test, "tfidf")
@@ -119,7 +119,7 @@ Xv_train, Xv_test = word_embeddings(X_train, X_test, "tfidf")
 
 # ### Training
 
-# In[ ]:
+# In[140]:
 
 
 ### Linear regression 
