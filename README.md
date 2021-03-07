@@ -29,8 +29,9 @@ Dataset is highly imbalanced
 <li>decent samples(negative class): 143346</li>
 <li>not-decent comments(positive class): 16225</li> 
 <li>ratio of negative class with positive class: 89.8:10.2</li>
-<ul>
+</ul>
 	<br>These 16225 not-decent comments are are multilabeled under different types of toxic labels
+	<ul>
 	<li> toxic: 15294
 	<li> severe_toxic: 1595
 	<li> obscene: 8449
