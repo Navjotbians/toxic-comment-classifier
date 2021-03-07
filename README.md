@@ -8,7 +8,7 @@ Moreover, users can see others using hateful words, slurs and ideas, and those t
 Sharp increase in hateful comments on the farmers who are protesting at the outskirts of India's capital Delhi since October 2020 against the 3 Farm Bills that has been passed by the government in September 2020. Due to rampant toxicity, people are avoiding having meaningful discussion on these bills. Therefore, having a solid toxicity flagging system in place will allow online forums and social media platforms to effectively facilitate conversations.
 
 ## Goal 
-To build a Multi- label Classification model capable of detecting different level of toxicity like severe toxic, threats, obscenity, insults, and so on. 
+To build a Multi-label Multiclass Classification model capable of detecting different level of toxicity like severe toxic, threats, obscenity, insults, and so on for each comment. 
 
 ## Dataset and Features
  <!-- Links -->
@@ -22,10 +22,19 @@ To build a Multi- label Classification model capable of detecting different leve
 * `insult`
 * `identity_hate`
 
+## Exploratory data analysis
+Dataset is highly imbalanced
+total samples: 159571 
+decent samples(negative class): 143346
+not-decent comments(positive class): 16225 
+ratio of negative class with positive class: 89.8:10.2
+Run `eda.ipynb` from `notebooks/` to check the detailed exploration of the data
+
+
 * Random base line - discuss the class based accuracies
 * Evaluation matrix
 
-## Exploratory data analysis
+
 
 
 ## Data pre - processing
