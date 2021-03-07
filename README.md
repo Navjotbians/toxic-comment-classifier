@@ -67,6 +67,7 @@ Run `baseline_model.ipynb` from `notebooks/` to see the details.
 
 
 ## Data pre - processing
+Run `processing.py` from `src/` dir
 
 
 ## ML models 
