@@ -46,7 +46,8 @@ For the same reason, we are not using accuracy as a measure of a model performan
 For details run  `eda.ipynb` from `notebooks/` to check the detailed exploration of the data
 
 
-* Random base line - discuss the class based accuracies
+## Random base line
+
 * Evaluation matrix
 
 
