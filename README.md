@@ -50,7 +50,8 @@ For details run  `eda.ipynb` from `notebooks/` to check the detailed exploration
 The purpose of this model is to make predictions for all six categories on a comment using some set of rules. To do this, label-wise six datasets are created, then all the words are stored in the dictionary with its occurance count for each dataset. Finally predictions are made by checking the presence of top n words from the frequently used word dictionary, in the comments.
 <br>
 Minimum accuracy for predicting `toxic `, `severe_toxic `, `obscene `, `threat `, `insult `, or  `identity_hate ` class of the Baseline model is more that 88%.
-<br>Label-wise ccuracies for:
+<br>
+Label-wise ccuracies for:
 <ol>
 <li> toxic: 89.4%</li>
 <li> severe_toxic: 88.2%</li>
@@ -61,6 +62,7 @@ Minimum accuracy for predicting `toxic `, `severe_toxic `, `obscene `, `threat `
 </ol>
 
 Based on the rule implimented here, baseline classifier is classifying decent and not-decent comments with the **accuracy of 76.6%**.Now we have to see if AI based models giver better performance than this.
+<br>
 Run `baseline_model.ipynb` from `notebooks/` to see the details.
 
 
