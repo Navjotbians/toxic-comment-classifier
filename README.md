@@ -52,19 +52,16 @@ The purpose of this model is to make predictions for all six categories on a com
 Minimum accuracy for predicting `toxic `, `severe_toxic `, `obscene `, `threat `, `insult `, or  `identity_hate ` class of the Baseline model is more that 88%.
 <br>Label-wise ccuracies for:
 <ol>
-<li>`toxic `: 89.4%</li>
-<li>`severe_toxic `: 88.2%</li>
-<li>`obscene `: 96.3%</li>
-<li>`threat `: 87.8%</li>
-<li>`insult `: 95.8%</li>
-<li>`identity_hate `: 98.3%</li>
+<li> toxic: 89.4%</li>
+<li> severe_toxic: 88.2%</li>
+<li> obscene: 96.3%</li>
+<li> threat: 87.8%</li>
+<li> insult: 95.8%</li>
+<li> identity_hate: 98.3%</li>
 </ol>
 
 Based on the rule implimented here, baseline classifier is classifying decent and not-decent comments with the **accuracy of 76.6%**.Now we have to see if AI based models giver better performance than this.
-
-* Evaluation matrix
-
-
+Run `baseline_model.ipynb` from `notebooks/` to see the details.
 
 
 ## Data pre - processing
