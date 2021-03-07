@@ -5,53 +5,39 @@
 
 # #### Import all the required packages
 
-# In[127]:
+# In[39]:
 
 
 import pandas as pd
 import numpy as np
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn import feature_extraction,model_selection,preprocessing
-from sklearn.metrics import accuracy_score
+from sklearn import feature_extraction,model_selection,preprocessing, naive_bayes,pipeline, manifold
+from sklearn.metrics import accuracy_score, classification_report
 
 
 # #### load processed dataset
 
-# In[128]:
+# In[54]:
 
 
-df = pd.read_csv('../data/processed/processed_data.csv')
+df = pd.read_csv('../data/processed/processed_stem_data.csv')
 
 
-# In[129]:
-
-
-### dropping the original unclean comment coloum from dataset
-df = df.drop('comment_text', axis = 1)
-
-
-# In[130]:
-
-
-### Renaming the clean comment colum to comment_text for ease
-df = df.rename({'clean_comment': 'comment_text'}, axis=1)
-
-
-# In[131]:
+# In[55]:
 
 
 df.head()
 
 
-# In[132]:
+# In[56]:
 
 
 ### fill NA for any missing data 
 df['comment_text'].fillna("missing", inplace=True)
 
 
-# In[133]:
+# In[57]:
 
 
 labels = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
@@ -60,19 +46,19 @@ corpus = df['comment_text']
 
 # ### Split the date into train test datasets
 
-# In[134]:
+# In[58]:
 
 
 X_train, X_test, y_train, y_test = model_selection.train_test_split(corpus,df[labels],test_size=0.25,random_state=42)
 
 
-# In[135]:
+# In[59]:
 
 
 X_train.shape, X_test.shape
 
 
-# In[136]:
+# In[60]:
 
 
 # Stats of X_train labels
@@ -83,7 +69,7 @@ df_stats = pd.DataFrame(counts, columns=['Labels', 'number_of_comments'])
 df_stats
 
 
-# In[137]:
+# In[61]:
 
 
 #stats of X_test labels
@@ -96,7 +82,7 @@ df_stats
 
 # #### Converting text comments into vectors using bag of words or TF-IDF 
 
-# In[138]:
+# In[62]:
 
 
 def word_embeddings(X_train, X_test, embedding_type = "tfidf"):
@@ -111,7 +97,7 @@ def word_embeddings(X_train, X_test, embedding_type = "tfidf"):
     return X_train, X_test
 
 
-# In[139]:
+# In[63]:
 
 
 Xv_train, Xv_test = word_embeddings(X_train, X_test, "tfidf")
@@ -119,7 +105,7 @@ Xv_train, Xv_test = word_embeddings(X_train, X_test, "tfidf")
 
 # ### Training
 
-# In[140]:
+# In[52]:
 
 
 ### Linear regression 
@@ -130,7 +116,7 @@ for label in labels:
     logreg.fit(Xv_train, y_train[label])
     # compute the testing accuracy
     prediction = logreg.predict(Xv_test)
-    print('Validation accuracy is {}'.format(accuracy_score(y_test[label], prediction)))
+    print('Validation accuracy is \n {}'.format(classification_report(y_test[label], prediction)))
 
 
 # <br> Checked the impact of use of Bag of words and TF-IDF on the accuracy of Linear regression. 
@@ -138,6 +124,20 @@ for label in labels:
 # <br>Remained same - Identity hate, threat
 # <br>Almost same - Severe_toxic
 # <br>Little bit improved with the use of TF-IDF but not very significant change - Toxic, Obscene, insult
+
+# In[64]:
+
+
+### Naive bayes
+for label in labels:
+    print('... Processing {}'.format(label))
+    # train the model 
+    nbayes = OneVsRestClassifier(naive_bayes.MultinomialNB())
+    nbayes.fit(Xv_train, y_train[label])
+    # compute the testing accuracy
+    prediction = nbayes.predict(Xv_test)
+    print('Validation accuracy is \n {}'.format(classification_report(y_test[label], prediction)))
+
 
 # In[ ]:
 

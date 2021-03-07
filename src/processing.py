@@ -1,41 +1,20 @@
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
-import re
-import string
-import operator
-
-### data cleaner function
-def clean(input_str):
-    input_str = input_str.lower()
-    input_str = re.sub(r'\d+', '', input_str)
-    input_str = re.sub(r"n't", " not ", input_str)
-    input_str = re.sub(r"can't", "cannot ", input_str)
-    input_str = re.sub(r"what's", "what is ", input_str)
-    input_str = re.sub(r"\'s", " ", input_str)
-    input_str = re.sub(r"\'ve", " have ", input_str)
-    input_str = re.sub(r"\'re", " are ", input_str)
-    input_str = re.sub(r"\'d", " would ", input_str)
-    input_str = re.sub(r"\'ll", " will ", input_str)
-    input_str = re.sub(r"\'scuse", " excuse ", input_str)
-    input_str = re.sub(r"i'm", "i am", input_str)
-    input_str = re.sub(r" m ", " am ", input_str)
-    input_str = re.sub('\s+', ' ', input_str)
-    input_str = re.sub('\W', ' ', input_str)
-    input_str = input_str.translate(str.maketrans('','', string.punctuation))
-    input_str = input_str.strip()
-    return input_str
+import pandas as pd
+# import string
+# import operator
+from clean_comments import  clean
 
 ### Frequently used words in the obscene comments
-def make_dict(d, stemm = False,lemm = True):
+def process_txt(d, stemm = False,lemm = True):
     #all_word = []
         ### Clean input data
     processed_text = clean(d)
+
         ### Tokenization
     processed_text = word_tokenize(processed_text)
+
      ### remove stop words
     processed_text = [word for word in processed_text if word not in stopwords.words('english')]
     #all_word.append(processed_text)
@@ -54,4 +33,20 @@ def make_dict(d, stemm = False,lemm = True):
     
     return text
 
+if __name__ == "__main__":
 
+    df = pd.read_csv('../data/raw/train.csv')
+
+    ### processing each comment and appending it to the dataset
+    df['clean_comment'] = df['comment_text'].apply(lambda x:process_txt(x))
+
+    ### dropping the original unclean comment coloum from dataset
+    df = df.drop('comment_text', axis = 1)
+
+    ### Renaming the clean comment colum to comment_text for ease
+    df = df.rename({'clean_comment': 'comment_text'}, axis=1)
+
+    # print("dataset after dropping old comment {}".format(df.comment_text))
+
+    ### Save processed data to 
+    df.to_csv(r'F:\AI\Toxic-comment-classifier\data\processed\processed_data.csv') 
