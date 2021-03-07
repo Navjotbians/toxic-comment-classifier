@@ -67,7 +67,7 @@ Run `baseline_model.ipynb` from `notebooks/` to see the details.
 
 
 ## Data pre - processing
-Run `processing.py` from `src/` dir
+Run `processing.py` from `src/` dir to get the `processed_data.csv`  which is already saved in `data/proccesed/` dir
 
 
 ## ML models 
