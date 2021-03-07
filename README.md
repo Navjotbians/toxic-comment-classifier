@@ -24,10 +24,12 @@ To build a Multi-label Multiclass Classification model capable of detecting diff
 
 ## Exploratory data analysis
 Dataset is highly imbalanced
-total samples: 159571 
-decent samples(negative class): 143346
-not-decent comments(positive class): 16225 
-ratio of negative class with positive class: 89.8:10.2
+<ul>
+<li>total samples: 159571</li>
+<li>decent samples(negative class): 143346</li>
+<li>not-decent comments(positive class): 16225</li> 
+<li>ratio of negative class with positive class: 89.8:10.2</li>
+<ul>
 Run `eda.ipynb` from `notebooks/` to check the detailed exploration of the data
 
 
