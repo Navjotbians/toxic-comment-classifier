@@ -46,7 +46,21 @@ For the same reason, we are not using accuracy as a measure of a model performan
 For details run  `eda.ipynb` from `notebooks/` to check the detailed exploration of the data
 
 
-## Random base line
+## Baseline Model
+The purpose of this model is to make predictions for all six categories on a comment using some set of rules. To do this, label-wise six datasets are created, then all the words are stored in the dictionary with its occurance count for each dataset. Finally predictions are made by checking the presence of top n words from the frequently used word dictionary, in the comments.
+<br>
+Minimum accuracy for predicting `toxic `, `severe_toxic `, `obscene `, `threat `, `insult `, or  `identity_hate ` class of the Baseline model is more that 88%.
+<br>Label-wise ccuracies for:
+<ol>
+<li>`toxic `: 89.4%</li>
+<li>`severe_toxic `: 88.2%</li>
+<li>`obscene `: 96.3%</li>
+<li>`threat `: 87.8%</li>
+<li>`insult `: 95.8%</li>
+<li>`identity_hate `: 98.3%</li>
+</ol>
+
+Based on the rule implimented here, baseline classifier is classifying decent and not-decent comments with the **accuracy of 76.6%**.Now we have to see if AI based models giver better performance than this.
 
 * Evaluation matrix
 
