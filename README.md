@@ -30,6 +30,17 @@ Dataset is highly imbalanced
 <li>not-decent comments(positive class): 16225</li> 
 <li>ratio of negative class with positive class: 89.8:10.2</li>
 <ul>
+	These 16225 not-decent comments are are multilabeled under different types of toxic labels
+	<li>`toxic`: 15294
+	<li>`severe_toxic`: 1595
+	<li>`obscene: 8449
+	<li>`threat`: 478
+	<li>`insult`: 7877
+	<li>`identity_hate`: 1405
+
+With this much skewness in dataset, the model will give default accuracy of 90% in classifying a comment as a decent without learning anything. To overcome this problem we could use stratified K-fold cross validation techniques to make sure this skewness doesn't lead model to produce biased results.
+<br>For the same reason, we are not using accuracy as a measure of a model performance, so we will explore alternative matrics that provide better guidance in evaluating and selecting model such as F1 score, AUC.
+Further, pairwise label comparison is done to check if there is any overlap, for example, it was noted that all the `severe_toxic` comments are `toxic`
 Run `eda.ipynb` from `notebooks/` to check the detailed exploration of the data
 
 
