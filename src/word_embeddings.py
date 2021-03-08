@@ -1,6 +1,6 @@
 from sklearn import feature_extraction
 
-def embeddings(X_train, X_test, embedding_type = "tfidf"):
+def w_embeddings(X_train, X_test, embedding_type = "tfidf"):
     if embedding_type == "bow":
         bw_vectorizer = feature_extraction.text.CountVectorizer(max_features= 100)
         X_train = bw_vectorizer.fit_transform(X_train).toarray()
