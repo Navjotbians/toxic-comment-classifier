@@ -3,7 +3,7 @@
 
 # # Prcessed Data
 
-# This notebook guide through the steps to creating the processed dataset
+# This notebook guides through the steps to creating the processed dataset
 
 # In[1]:
 
