@@ -67,8 +67,7 @@ Run `baseline_model.ipynb` from `notebooks/` to see the details.
 
 
 ## Data pre - processing
-Run `processing.py` from `src/` dir to get the `processed_data.csv`  which is already saved in `data/proccesed/` dir
-
+A copy of `processed_data.csv` is already saved in `data/proccesed/` dir. In case you want to get the same results go ahead and run `processing.py` from `src/` dir to get the `processed_data.csv`  which will get saved in  `data/proccesed/` dir by dafault, so make sure you have this folder in  `Toxic-comment-classifier/` dir. In case you don't have `data/` folder then make sure to change the path for reading `train.csv` and writing the `processed_data.csv` before running the script.
 
 ## ML models 
 
