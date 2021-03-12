@@ -12,6 +12,9 @@ Sharp increase in hateful comments on the farmers who are protesting at the outs
 To build a Multi-label Multiclass Classification model capable of detecting different level of toxicity like severe toxic, threats, obscenity, insults, and so on for each comment. 
 
 ## Getting started
+Let's start by cloning the repository by running below command in cmd
+<br> `git clone https://github.com/Navjotbians/toxic-comment-classifier.git`
+
 ```python
 # Import necessary packages
 
@@ -21,7 +24,7 @@ import numpy
 import sklearn
 import seaborn
 ```
-Let’s start by importing these necessary packages. If you have not installed these packages,you can install them by typing the below command in the Terminal.
+Start importing these necessary packages. If you have not installed these packages,you can install them by typing the below command in the Terminal.
 <br>`pip install requirements.txt`
 
 ## Dataset and Features
