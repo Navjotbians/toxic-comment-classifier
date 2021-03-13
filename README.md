@@ -107,9 +107,7 @@ With this much skewness in dataset, the model will give default accuracy of 90% 
 <details>
   <summary><b>AI Model</b></summary> 
  
- To tackle this multilabel classification problem `OneVsRestClassifier` is used with `LogisticRegression`, `Naive Bayes`
-  - <kbd>CMD/CTRL</kbd> + <kbd>C</kbd>: to copy
-  - <kbd>CMD/CTRL</kbd> + <kbd>V</kbd>: to paste
+ To tackle this multilabel classification problem `OneVsRestClassifier` is used with `LogisticRegression` and `Naive Bayes`
 </details>
 
 <details>
