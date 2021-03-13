@@ -91,7 +91,7 @@ This project has **6 sub-directories:**
 	\---templates
 		form.html
 	```
-<details>
+</details>
 	
 ## Exploratory data analysis
 Dataset is highly imbalanced
