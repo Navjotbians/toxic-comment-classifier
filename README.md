@@ -92,13 +92,19 @@ Project has **5 main sub-directories:**
 <details>
   <summary><b>Rule Based Model</b></summary> 
 
-  - <kbd>CMD/CTRL</kbd> + <kbd>C</kbd>: to copy
-  - <kbd>CMD/CTRL</kbd> + <kbd>V</kbd>: to paste
-</details>
-
-<details>
-  <summary><b>AI Model</b></summary> 
-
+  The purpose of this model is to make predictions for all six categories on a comment using some set of rules. To do this, label-wise six datasets are created, then all the       words from the dataset are stored in their respective dictionaries with its occurance count in descending order. Finally predictions are made by checking the presence of top n   words from the dictionary, in the comments.
+  <br>
+  <br>
+  Minimum accuracy for predicting `toxic `, `severe_toxic `, `obscene `, `threat `, `insult `, or  `identity_hate ` class of the Baseline model is more that 88%.
+  <br>
+  Label-wise accuracies for:
+   * toxic: 89.4%
+   * severe_toxic: 88.2%
+   * obscene: 96.3%
+   * threat: 87.8%
+   * insult: 95.8%
+   * identity_hate: 98.3%<br>
+  <br>Based on the rule implimented here, baseline classifier is classifying decent and not-decent comments with the **accuracy of 76.6%**.Now we have to see if AI based models giver better performance than this.
   - <kbd>CMD/CTRL</kbd> + <kbd>C</kbd>: to copy
   - <kbd>CMD/CTRL</kbd> + <kbd>V</kbd>: to paste
 </details>
@@ -125,31 +131,7 @@ Project has **5 main sub-directories:**
 </details>
 
 
-## Exploratory data analysis
 
-
-
-Dataset is highly imbalanced
-<ul>
-<li>total samples: 159571</li>
-<li>decent samples(negative class): 143346</li>
-<li>not-decent comments(positive class): 16225</li> 
-<li>ratio of negative class with positive class: 89.8:10.2</li>
-</ul>
-	<br>These 16225 not-decent comments are are multilabeled under different types of toxic labels
-	<ul>
-	<li> toxic: 15294
-	<li> severe_toxic: 1595
-	<li> obscene: 8449
-	<li> threat: 478
-	<li> insult: 7877
-	<li> identity_hate: 1405
-	</ul>
-
-With this much skewness in dataset, the model will give default accuracy of 90% in classifying a comment as a decent without learning anything. To overcome this problem we could use stratified K-fold cross validation techniques to make sure this skewness doesn't lead model to produce biased results.
-For the same reason, we are not using accuracy as a measure of a model performance, so we will explore alternative matrics that provide better guidance in evaluating and selecting model such as F1 score, Jaccard score, AUC.
-<br>Further, pairwise label comparison is done to check if there is any kind of overlap between the features of the two labels, for example, it was noted that all the `severe_toxic` comments are `toxic`
-For details run  `eda.ipynb` from `notebooks/` to check the detailed exploration of the data
 
 
 ## Baseline Model
