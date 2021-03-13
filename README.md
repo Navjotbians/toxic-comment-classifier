@@ -45,6 +45,54 @@ Start importing these necessary packages. If you have not installed these packag
 * `insult`
 * `identity_hate`
 
+## Project structure
+This project has **6 sub-directories:** 
+<details>
+	<summary>Click here to see project structure</summary>
+	```
+	|   app.py
+	|   main.py
+	|   README.md
+	|   requirements.txt
+	|   
+	+---data
+	|   +---processed
+	|   |       processed_data.csv
+	|   |       processed_stem_data.csv
+	|   |       
+	|   \---raw
+	|           train.csv
+	|           
+	+---images
+	|       data_head.JPG
+	|       logo4.jpg
+	|       
+	+---model
+	|       bw_vectorizer.pkl
+	|       bw_vectorizer1000.pkl
+	|       LinearSVC
+	|       LogisticRegression
+	|       MultinomialNB
+	|       rule_base_pred.pkl
+	|       
+	+---notebooks
+	|       baseline_model.ipynb
+	|       eda.ipynb
+	|       inferance.ipynb
+	|       modelling.ipynb
+	|       preprocessing.ipynb
+	|       
+	+---src
+	|       clean_comments.py
+	|       patterns.py
+	|       processing.py
+	|       word_embeddings.py
+	|       
+	\---templates
+		form.html
+	```
+<details>
+	
 ## Exploratory data analysis
 Dataset is highly imbalanced
 <ul>
