@@ -26,6 +26,14 @@ import seaborn
 Start importing these necessary packages. If you have not installed these packages,you can install them by typing the below command in the terminal.
 <br>`pip install requirements.txt`
 
+## Project structure
+Project has **5 main sub-directories:** 
+* `data/`: Contains `raw/` and `processed/` subdirectories. `raw/` dir contain `training data` and `processed/` dir  is where we store the processed data, a copy of processed data is already saved in this folder. [Click here](https://drive.google.com/drive/folders/1gMJHNxCajYsRzMPjwUuPEM2S5tIp_b3r?usp=sharing) to download the `data ` folder,save it in the `Toxic Comment Classifier/` dir.
+* `model/`: Trained models are stored in this folder
+* `notebooks/`: Contains the experiments and explainations
+* `src/`: Stores all the required scripts
+* `templates/`: Form layout for the application is stored here 
+
 ## Dataset and Features
  <!-- Links -->
  [Dataset](https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data) used in this project is the Jigsaw/Conversation AI dataset provided for the Kaggle Toxic Comment Classification Challenge. This dataset contains 159571 Wikipedia comments which have been labeled by human raters for type of toxicity.
@@ -36,17 +44,67 @@ Start importing these necessary packages. If you have not installed these packag
   ![](images/data_head.JPG)
 </details>
 
-## Project structure
-Project has **5 main sub-directories:** 
-* `data/`: Contains `raw/` and `processed/` subdirectories. `raw/` dir contain `training data` and `processed/` dir  is where we store the processed data, a copy of processed data is already saved in this folder. [Click here](https://drive.google.com/drive/folders/1gMJHNxCajYsRzMPjwUuPEM2S5tIp_b3r?usp=sharing) to download the `data ` folder,save it in the `Toxic Comment Classifier/` dir.
-* `model/`: Trained models are stored in this folder
-* `notebooks/`: Contains the experiments and explainations
-* `src/`: Stores all the required scripts
-* `templates/`: Form layout for the application is stored here 
 
 ## Project Pipeline	
+<details>
+  <summary><b>Dataset</b></summary> 
+
+  - <kbd>CMD/CTRL</kbd> + <kbd>C</kbd>: to copy
+  - <kbd>CMD/CTRL</kbd> + <kbd>V</kbd>: to paste
+</details>
+
+<details>
+  <summary><b>Exploratory data analysis</b></summary> 
+
+  - <kbd>CMD/CTRL</kbd> + <kbd>C</kbd>: to copy
+  - <kbd>CMD/CTRL</kbd> + <kbd>V</kbd>: to paste
+</details>
+
+<details>
+  <summary><b>Data pre-processing and feature selection</b></summary> 
+
+  - <kbd>CMD/CTRL</kbd> + <kbd>C</kbd>: to copy
+  - <kbd>CMD/CTRL</kbd> + <kbd>V</kbd>: to paste
+</details>
+
+<details>
+  <summary><b>Rule Based Model</b></summary> 
+
+  - <kbd>CMD/CTRL</kbd> + <kbd>C</kbd>: to copy
+  - <kbd>CMD/CTRL</kbd> + <kbd>V</kbd>: to paste
+</details>
+
+<details>
+  <summary><b>AI Model</b></summary> 
+
+  - <kbd>CMD/CTRL</kbd> + <kbd>C</kbd>: to copy
+  - <kbd>CMD/CTRL</kbd> + <kbd>V</kbd>: to paste
+</details>
+
+<details>
+  <summary><b>AI Model</b></summary> 
+
+  - <kbd>CMD/CTRL</kbd> + <kbd>C</kbd>: to copy
+  - <kbd>CMD/CTRL</kbd> + <kbd>V</kbd>: to paste
+</details>
+
+<details>
+  <summary><b>Model Evaluation</b></summary> 
+
+  - <kbd>CMD/CTRL</kbd> + <kbd>C</kbd>: to copy
+  - <kbd>CMD/CTRL</kbd> + <kbd>V</kbd>: to paste
+</details>
+
+<details>
+  <summary><b>Inference</b></summary> 
+
+  - <kbd>CMD/CTRL</kbd> + <kbd>C</kbd>: to copy
+  - <kbd>CMD/CTRL</kbd> + <kbd>V</kbd>: to paste
+</details>
+
 
 ## Exploratory data analysis
+
 
 <!-- UL -->
 **train.csv** - this file contains comments with their binary labels which tells different type of toxicity. The types of toxicity are :
@@ -99,7 +157,7 @@ Based on the rule implimented here, baseline classifier is classifying decent an
 Run `baseline_model.ipynb` from `notebooks/` to see the details.
 
 
-## Data pre - processing
+## Data pre-processing
 A copy of `processed_data.csv` is already saved in `data/proccesed/` dir. In case you want to get the same results go ahead and run `processing.py` from `src/` dir to get the `processed_data.csv`  which will get saved in  `data/proccesed/` dir by dafault, so make sure you have this folder in  `Toxic-comment-classifier/` dir. In case you don't have `data/` folder then make sure to change the path for reading `train.csv` and writing the `processed_data.csv` before running the script.
 
 ## ML models 
