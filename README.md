@@ -127,3 +127,8 @@ For model evaluation *stratified K-fold* cross validation in conjuction with *F1
  Trained `Multinomial` varient of `Naive Bayes` model is used to make the prediction on incomming comments.
 </details>
 
+<details>
+  <summary><b>End product</b></summary> 
+
+ Web-based application using `flask`
+</details>
