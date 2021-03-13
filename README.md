@@ -104,9 +104,8 @@ Project has **5 main sub-directories:**
    * threat: 87.8%
    * insult: 95.8%
    * identity_hate: 98.3%<br>
-  <br>Based on the rule implimented here, baseline classifier is classifying decent and not-decent comments with the **accuracy of 76.6%**.Now we have to see if AI based models giver better performance than this.
-  - <kbd>CMD/CTRL</kbd> + <kbd>C</kbd>: to copy
-  - <kbd>CMD/CTRL</kbd> + <kbd>V</kbd>: to paste
+  <br>Based on the rule implimented here, baseline classifier is classifying decent and not-decent comments with the **accuracy of 76.6%**.Now we have to see if AI based models gives better performance than this.
+  <br><br>Run `baseline_model.ipynb` from `notebooks/` to see the details.
 </details>
 
 <details>
