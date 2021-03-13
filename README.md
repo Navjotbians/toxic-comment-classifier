@@ -58,7 +58,8 @@ Project has **5 main sub-directories:**
 
 <details>
   <summary><b>Exploratory data analysis</b></summary> 
-
+  
+  <br>
   Dataset is highly imbalanced
   <ul>
   <li>total samples: 159571</li>
@@ -66,7 +67,7 @@ Project has **5 main sub-directories:**
   <li>not-decent comments(positive class): 16225</li> 
   <li>ratio of negative class with positive class: 89.8:10.2</li>
   </ul>
-	<br>These 16225 not-decent comments are are multilabeled under different types of toxic labels
+	These 16225 not-decent comments are are multilabeled under different types of toxic labels
 	<ul>
 	<li> toxic: 15294
 	<li> severe_toxic: 1595
