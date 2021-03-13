@@ -81,8 +81,12 @@ With this much skewness in dataset, the model will give default accuracy of 90% 
 
 <details>
   <summary><b>Data pre-processing and feature selection</b></summary> 
-
-  A copy of `processed_data.csv` is already saved in `data/proccesed/` dir. In case you want to get the same results go ahead and run `processing.py` from `src/` dir to get the `processed_data.csv`  which will get saved in  `data/proccesed/` dir by dafault, so make sure you have this folder in  `Toxic-comment-classifier/` dir. In case you don't have `data/` folder then make sure to change the path for reading `train.csv` and writing the `processed_data.csv` before running the script.
+ 
+ Steps taken to clean the comments
+ * Non-characters, unrequired spaces, digits are removed with the help of `re` liberary.
+ *  `Lemmatisation`, `stemming`, `tokenisation` and removal of `stopwords` done using `NLTK`
+ *  `TF-IDF` and `Bag-of-Words` techniques are used to get the word embedding using `sklearn`<br>
+<br>A copy of `processed_data.csv` is already saved in `data/proccesed/` dir. In case you want to get the same results go ahead and run `processing.py` from `src/` dir to get the `processed_data.csv`  which will get saved in  `data/proccesed/` dir by dafault, so make sure you have this folder in  `Toxic-comment-classifier/` dir. In case you don't have `data/` folder then make sure to change the path for reading `train.csv` and writing the `processed_data.csv` before running the script.
 </details>
 
 <details>
@@ -107,7 +111,7 @@ With this much skewness in dataset, the model will give default accuracy of 90% 
 <details>
   <summary><b>AI Model</b></summary> 
  
- To tackle this multilabel classification problem `OneVsRestClassifier` is used with `LogisticRegression` and `Naive Bayes`
+ To tackle multilabel classification problem `OneVsRestClassifier` is used with different estimators such as `LogisticRegression`, `Naive Bayes`
 </details>
 
 <details>
