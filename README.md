@@ -26,6 +26,10 @@ import seaborn
 Start importing these necessary packages. If you have not installed these packages,you can install them by typing the below command in the terminal.
 <br>`pip install requirements.txt`
 
+To run web application type the below command in the terminal.
+<br> `python app.py`
+<br> This server uses [http://127.0.0.1:5000](http://127.0.0.1:5000) address.
+
 ## Project structure
 Project has **5 main sub-directories:** 
 * `data/`: Contains `raw/` and `processed/` subdirectories. `raw/` dir contain `training data` and `processed/` dir  is where we store the processed data, a copy of processed data is already saved in this folder. [Click here](https://drive.google.com/drive/folders/1gMJHNxCajYsRzMPjwUuPEM2S5tIp_b3r?usp=sharing) to download the `data ` folder,save it in the `Toxic Comment Classifier/` dir.
