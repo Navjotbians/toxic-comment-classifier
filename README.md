@@ -30,12 +30,13 @@ Start importing these necessary packages. If you have not installed these packag
 ## Dataset and Features
  <!-- Links -->
  [Dataset](https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data) used in this project is the Jigsaw/Conversation AI dataset provided for the Kaggle Toxic Comment Classification Challenge. This dataset contains 159571 Wikipedia comments which have been labeled by human raters for type of toxicity.
- <br>Below is the preview of this dataset
- 
- ![](images/data_head.JPG)
- 
- 
- This dataset can also be accessed from `data` folder, which contains the `train.csv` in `raw/` dir and processed data in `processed/` dir, [click here](https://drive.google.com/drive/folders/1gMJHNxCajYsRzMPjwUuPEM2S5tIp_b3r?usp=sharing) to download the `data ` folder and save it in the `Toxic Comment Classifier/` dir, this will let you run the code without having to worry about changing the path while reading the `.csv` data files.
+ <br>
+ <details>
+  <summary><b>Below is the preview of this dataset</b></summary>
+  
+  ![](images/data_head.JPG)
+</details>
+
 <!-- UL -->
 **train.csv** - this file contains comments with their binary labels which tells different type of toxicity. The types of toxicity are :
 * `toxic`
@@ -46,9 +47,13 @@ Start importing these necessary packages. If you have not installed these packag
 * `identity_hate`
 
 ## Project structure
-Project has **6 sub-directories:** 
-* `data/`: Contains `raw/` and `processed/` subdirectories. `raw/` dir contain `training data` and `processed/` dir  is where we stores processed data. [Click here](https://drive.google.com/drive/folders/1gMJHNxCajYsRzMPjwUuPEM2S5tIp_b3r?usp=sharing) to download the `data ` folder and save it in the `Toxic Comment Classifier/` dir, this already contains the copy of the processed data.
-* `model/`: 
+Project has **5 main sub-directories:** 
+* `data/`: Contains `raw/` and `processed/` subdirectories. `raw/` dir contain `training data` and `processed/` dir  is where we store the processed data, a copy of processed data is already saved in this folder. [Click here](https://drive.google.com/drive/folders/1gMJHNxCajYsRzMPjwUuPEM2S5tIp_b3r?usp=sharing) to download the `data ` folder,save it in the `Toxic Comment Classifier/` dir.
+* `model/`: Trained models are stored in this folder
+* `notebooks/`: Contains the experiments and explainations
+* `src/`: Stores all the scripts
+* `templates/`: Form layout for the application is stored here 
+
 	
 ## Exploratory data analysis
 Dataset is highly imbalanced
