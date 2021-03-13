@@ -32,19 +32,10 @@ Start importing these necessary packages. If you have not installed these packag
  [Dataset](https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data) used in this project is the Jigsaw/Conversation AI dataset provided for the Kaggle Toxic Comment Classification Challenge. This dataset contains 159571 Wikipedia comments which have been labeled by human raters for type of toxicity.
  <br>
  <details>
-  <summary><b>Below is the preview of this dataset</b></summary>
+  <summary><b>Click here to see the preview of the dataset</b></summary>
   
   ![](images/data_head.JPG)
 </details>
-
-<!-- UL -->
-**train.csv** - this file contains comments with their binary labels which tells different type of toxicity. The types of toxicity are :
-* `toxic`
-* `severe_toxic`
-* `obscene`
-* `threat`
-* `insult`
-* `identity_hate`
 
 ## Project structure
 Project has **5 main sub-directories:** 
@@ -56,6 +47,15 @@ Project has **5 main sub-directories:**
 
 	
 ## Exploratory data analysis
+
+<!-- UL -->
+**train.csv** - this file contains comments with their binary labels which tells different type of toxicity. The types of toxicity are :
+* `toxic`
+* `severe_toxic`
+* `obscene`
+* `threat`
+* `insult`
+* `identity_hate`
 Dataset is highly imbalanced
 <ul>
 <li>total samples: 159571</li>
