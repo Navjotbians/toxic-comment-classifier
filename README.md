@@ -65,13 +65,13 @@ Project has **5 main sub-directories:**
   <li>not-decent comments(positive class): 16225</li> 
   <li>ratio of negative class with positive class: 89.8:10.2</li>
   </ul> 
- These 16225 not-decent comments are are multilabeled under different types of toxic labels
+ These 16225 not-decent comments are multilabeled under different types of toxic labels
  
   <!-- UL -->
   ![](images/count_category_wise.png)
   <!-- UL -->
 
- These 16225 not-decent comments are are multilabeled under different types of toxic labels
+ Note that here comments could have more than one label assigned to them, so this graph shown below shows the count of comments and number of labels attached to them
   <!-- UL -->
   ![](images/count_category_wise.png)
   <!-- UL -->
