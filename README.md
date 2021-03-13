@@ -46,52 +46,9 @@ Start importing these necessary packages. If you have not installed these packag
 * `identity_hate`
 
 ## Project structure
-This project has **6 sub-directories:** 
-<details>
-	<summary>Click here to see project structure</summary>
-	```
-	|   app.py
-	|   main.py
-	|   README.md
-	|   requirements.txt
-	|   
-	+---data
-	|   +---processed
-	|   |       processed_data.csv
-	|   |       processed_stem_data.csv
-	|   |       
-	|   \---raw
-	|           train.csv
-	|           
-	+---images
-	|       data_head.JPG
-	|       logo4.jpg
-	|       
-	+---model
-	|       bw_vectorizer.pkl
-	|       bw_vectorizer1000.pkl
-	|       LinearSVC
-	|       LogisticRegression
-	|       MultinomialNB
-	|       rule_base_pred.pkl
-	|       
-	+---notebooks
-	|       baseline_model.ipynb
-	|       eda.ipynb
-	|       inferance.ipynb
-	|       modelling.ipynb
-	|       preprocessing.ipynb
-	|       
-	+---src
-	|       clean_comments.py
-	|       patterns.py
-	|       processing.py
-	|       word_embeddings.py
-	|       
-	\---templates
-		form.html
-	```
-</details>
+Project has **6 sub-directories:** 
+* `data/`: Contains `raw/` and `processed/` subdirectories. `raw/` dir contain `training data` and `processed/` dir  is where we stores processed data. [Click here](https://drive.google.com/drive/folders/1gMJHNxCajYsRzMPjwUuPEM2S5tIp_b3r?usp=sharing) to download the `data ` folder and save it in the `Toxic Comment Classifier/` dir, this already contains the copy of the processed data.
+* `model/`: 
 	
 ## Exploratory data analysis
 Dataset is highly imbalanced
