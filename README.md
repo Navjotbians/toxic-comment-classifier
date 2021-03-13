@@ -117,14 +117,13 @@ With this much skewness in dataset, the model will give default accuracy of 90% 
 <details>
   <summary><b>Model Evaluation</b></summary> 
 
-  - <kbd>CMD/CTRL</kbd> + <kbd>C</kbd>: to copy
-  - <kbd>CMD/CTRL</kbd> + <kbd>V</kbd>: to paste
+For model evaluation *stratified K-fold* cross validation in conjuction with *F1-score* and *Jaccard score* is used.
+
 </details>
 
 <details>
   <summary><b>Inference</b></summary> 
 
-  - <kbd>CMD/CTRL</kbd> + <kbd>C</kbd>: to copy
-  - <kbd>CMD/CTRL</kbd> + <kbd>V</kbd>: to paste
+ Trained `Multinomial` varient of `Naive Bayes` model is used to make the prediction on incomming comments.
 </details>
 
