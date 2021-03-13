@@ -17,14 +17,13 @@ Let's start by cloning the repository by running below command in cmd
 
 ```python
 # Import necessary packages
-
 import nltk
 import pandas
 import numpy
 import sklearn
 import seaborn
 ```
-Start importing these necessary packages. If you have not installed these packages,you can install them by typing the below command in the Terminal.
+Start importing these necessary packages. If you have not installed these packages,you can install them by typing the below command in the terminal.
 <br>`pip install requirements.txt`
 
 ## Dataset and Features
@@ -42,10 +41,11 @@ Project has **5 main sub-directories:**
 * `data/`: Contains `raw/` and `processed/` subdirectories. `raw/` dir contain `training data` and `processed/` dir  is where we store the processed data, a copy of processed data is already saved in this folder. [Click here](https://drive.google.com/drive/folders/1gMJHNxCajYsRzMPjwUuPEM2S5tIp_b3r?usp=sharing) to download the `data ` folder,save it in the `Toxic Comment Classifier/` dir.
 * `model/`: Trained models are stored in this folder
 * `notebooks/`: Contains the experiments and explainations
-* `src/`: Stores all the scripts
+* `src/`: Stores all the required scripts
 * `templates/`: Form layout for the application is stored here 
 
-	
+## Project Pipeline	
+
 ## Exploratory data analysis
 
 <!-- UL -->
@@ -74,7 +74,7 @@ Dataset is highly imbalanced
 	</ul>
 
 With this much skewness in dataset, the model will give default accuracy of 90% in classifying a comment as a decent without learning anything. To overcome this problem we could use stratified K-fold cross validation techniques to make sure this skewness doesn't lead model to produce biased results.
-For the same reason, we are not using accuracy as a measure of a model performance, so we will explore alternative matrics that provide better guidance in evaluating and selecting model such as F1 score, AUC.
+For the same reason, we are not using accuracy as a measure of a model performance, so we will explore alternative matrics that provide better guidance in evaluating and selecting model such as F1 score, Jaccard score, AUC.
 <br>Further, pairwise label comparison is done to check if there is any kind of overlap between the features of the two labels, for example, it was noted that all the `severe_toxic` comments are `toxic`
 For details run  `eda.ipynb` from `notebooks/` to check the detailed exploration of the data
 
