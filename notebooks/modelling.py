@@ -5,43 +5,57 @@
 
 # #### Import all the required packages
 
-# In[41]:
+# In[ ]:
+
+
+import os
+dir_path = os.path.dirname(os.getcwd())
+
+
+# In[59]:
 
 
 import pandas as pd
 import numpy as np
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.svm import LinearSVC
 from sklearn import feature_extraction,model_selection,preprocessing, naive_bayes,pipeline, manifold
 from sklearn.model_selection import cross_val_score
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_report, f1_score, roc_auc_score
+from sklearn.metrics import multilabel_confusion_matrix
+from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import GridSearchCV
+import pickle
 import sys  
-sys.path.append('F:/AI/Toxic-comment-classifier/src')
-from word_embeddings import w_embeddings
+sys.path.append(os.path.join(dir_path, "src"))
+from word_embeddings import get_embeddings
+from clean_comments import clean
+from processing import process_txt
 
 
 # #### load processed dataset
 
-# In[42]:
+# In[3]:
 
 
-df = pd.read_csv('../data/processed/processed_stem_data.csv')
+processed_data = os.path.join(dir_path, 'data', 'processed', 'processed_stem_data.csv')
 
 
-# In[43]:
+# In[4]:
 
 
-df.head()
+df = pd.read_csv(processed_data)
 
 
-# In[44]:
+# In[5]:
 
 
 ### fill NA for any missing data 
 df['comment_text'].fillna("missing", inplace=True)
 
 
-# In[45]:
+# In[6]:
 
 
 labels = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
@@ -50,20 +64,20 @@ corpus = df['comment_text']
 
 # ### Split the date into train test datasets
 
-# In[46]:
+# In[ ]:
 
 
 X_train, X_test, y_train, y_test = model_selection.train_test_split(corpus,df[labels],
                                                                     test_size=0.25,random_state=42)
 
 
-# In[47]:
+# In[ ]:
 
 
 X_train.shape, X_test.shape
 
 
-# In[48]:
+# In[ ]:
 
 
 # Stats of X_train labels
@@ -74,7 +88,7 @@ df_stats = pd.DataFrame(counts, columns=['Labels', 'number_of_comments'])
 df_stats
 
 
-# In[49]:
+# In[ ]:
 
 
 #stats of X_test labels
@@ -109,97 +123,208 @@ df_stats
 # <br>In **TF-IDF** also, we need dictionary of words with their count of occurance to do the calculation. **TF** assign more weightage to the word which repeat multiple times in the sentance where as **IDF** decreases the weightage to word as number of sentences containing the increases. Here, feature vectors not only contains 0's and 1' but does contain other other values depending on the word importance in the sentence. This is retaining the sementics of the sentence to some extent so it should perform better than BOW.
 # <br>Here **TF-IDG** can have zero value for the word which existed in every sentence and give more weightage to less often occured words that means it could cause over-fitting problem but that is yet to discove. 
 
-# In[50]:
-
-
-### pass "bow" to use Bag-of-Words instead of "tfidf"
-Xv_train, Xv_test = w_embeddings(X_train, X_test, "bow") 
-
-
-# In[51]:
-
-
-Xv_train
-
-
-# Now word embeddings are ready for `X_train`  and `X_test` data. These embeddings are in numpy array format, if we have a look at the the embeddings we will know this is high dimensional sparse data.
-
-# ### Training
-
-# Which model to use?
-# <br>
-# Which is the fastest model for hight dimensional sparse data?  - **Logistic regression**
-# We will use Logistic regression for this dataset to start with and the solver we are using is 'sag' as it is faster for large datsets.
-
-# #### With simple Train-Test split
+# We will try Bag-of-Words and TF-IDFto get our features for `X_train`  and `X_test` data. The resultant embeddings are in numpy array format, if we have a look at the the embeddings we will know it is high dimensional sparse data.
 
 # In[ ]:
 
 
-### Linear Regression
-accuracy_lr = [] ### list of accuracies of all the labels predicted by Linear regression
-for label in labels:
-    print('... Processing {}'.format(label))
+pkl_file = os.path.join(dir_path, 'model','bw_vectorizer1000.pkl' )
+
+
+# In[ ]:
+
+
+# Save vectorizer
+file = open(pkl_file,"wb")
+pickle.dump(bw_vectorizer,file)
+file.close()
+
+
+# In[ ]:
+
+
+# ### Open the saved vectorizer
+# open_file = open(pkl_file, "rb")
+# bw_vectorizer = pickle.load(open_file)
+# open_file.close()
+
+
+# In[ ]:
+
+
+Xv_train = train_feat
+
+
+# In[ ]:
+
+
+Xv_test = test_feat
+
+
+# ### Matrix used to evaluate the models
+
+# In[32]:
+
+
+def j_score(y_true, y_pred):
+    jaccard = np.minimum(y_true, y_pred).sum(axis = 1)/np.maximum(y_true, y_pred).sum(axis = 1)
+    return jaccard.mean()*100
+
+
+# In[33]:
+
+
+def print_score(y_pred, y_test, clf):
+    print("Clf: ",clf.__class__.__name__)
+    print("Jaccard score: {}".format(j_score(pd.DataFrame(y_test), pd.DataFrame(y_pred))))
+    print("F1 Score : {}".format(f1_score(y_test, y_pred,average='macro')))
+    
+
+
+# ### Training
+
+# In[34]:
+
+
+### OneVsRestClassifier
+def train_model(classifier,X, y, max_feature = 1000, embedding= 'bow' ):
+
+    #Train-test split
+    print("... Performing train test split")
+    X_train, X_test, y_train, y_test = model_selection.train_test_split(X,y,
+                                                                    test_size=0.25,random_state=42)
+    
+    ## Features extraction with word embedding
+    print("... Extracting features")
+    Xv_train, Xv_test, vectorizer = get_embeddings(X_train, X_test,
+                                                          max_feature = max_feature , embedding_type= embedding)
+    
     # train the model 
-    logreg = OneVsRestClassifier(LogisticRegression(solver='sag'))
-    logreg.fit(Xv_train, y_train[label])
-    # compute the testing accuracy
-    prediction = logreg.predict(Xv_test)
-    score = (accuracy_score(y_test[label], prediction))
-    accuracy_lr.append(score)
-    print('Validation accuracy is {}'.format(accuracy_score(y_test[label], prediction)))
-print("\n accuracy_lr: {}".format(accuracy_lr))
+    print('... Training {} model'.format(classifier.__class__.__name__))
+    clf = OneVsRestClassifier(classifier)
+    clf.fit(Xv_train, y_train)
+
+    # compute the test accuracy
+    print("...Computing accuracy")
+    prediction = clf.predict(Xv_test)
+
+    ## Accuracy score
+    score = (accuracy_score(y_test, prediction))
+    type2_score = j_score(y_test, prediction)
+    f1_s = f1_score(y_test, prediction,average='macro')
+    roc_auc = roc_auc_score(y_test, prediction)
+    confusion_matrix = multilabel_confusion_matrix(y_test, prediction)
+    score_sumry = [score, type2_score, f1_s, roc_auc]
+    
+    
+    ## Save model
+    print("...Saving model in model directory")
+    pkl_file = os.path.join(dir_path,'model', classifier.__class__.__name__)
+    file = open(pkl_file,"wb")
+    pickle.dump(clf,file)
+    file.close()
+    
+     #### Prediction on comment 
+
+    input_str = ["i'm going to kill you nigga, you are you sick or mad, i don't like you at all"]
+    input_str = clean(input_str[0])
+    input_str = process_txt(input_str, stemm= True)
+    input_str = vectorizer.transform([input_str])
+    
+
+    print('\n')
+    print("Model evaluation")
+    print("------")
+    print(print_score(prediction,y_test, classifier))
+    print('Accuracy is {}'.format(score))
+    print("ROC_AUC - {}".format(roc_auc))
+    print(print("check model accuracy on input_string {}".format(clf.predict(input_str))))
+    print("------")
+    print("Multilabel confusion matrix \n {}".format(confusion_matrix))
+    
+    return clf, vectorizer, score_sumry
+    
+
+
+# In[35]:
+
+
+n_bayes = naive_bayes.MultinomialNB()
+logreg = LogisticRegression(solver='sag')
+
+
+# #### With simple Train-Test split
+
+# Which model to use?
+# <br>
+# Which is the fastest model for high dimensional sparse data?  - **Logistic regression**
+# We will use Logistic regression for this dataset to start with and the solver we are using is 'sag' as it is faster for large datsets.
+
+# In[56]:
+
+
+lr_clf, lr_vectorizer, lr_sumry = train_model(logreg, corpus, df[labels])
+
+
+# In[58]:
+
+
+summary_lr = pd.DataFrame(lr_sumry, index = ['accuracy', 'jaccard score', 'F1_score', 'roc_score'], columns= [lr_clf.estimators_[0]])
+summary_lr
 
 
 # <br>**Naive Bayes** is quite populer with text data problems. It learns the parameters by looking at each feature individually and collect simple per-class stats from each feature.
 # We are going to use MultinomialNB because it assumes count data, that means, each feature represents an integer count of some-thing, in our problem- how often a word appears in a sentence.
 
-# In[74]:
+# In[36]:
 
 
-### Naive bayes
-accuracy_nb = []  ## list of accuracies of all the labels predicted by Naive Bayes
-for label in labels:
-    print('... Processing {}'.format(label))
-    # train the model 
-    nbayes = OneVsRestClassifier(naive_bayes.MultinomialNB())
-    nbayes.fit(Xv_train, y_train[label])
-    # compute the testing accuracy
-    prediction = nbayes.predict(Xv_test)
-    score = (accuracy_score(y_test[label], prediction))
-    accuracy_nb.append(score)
-    print('Validation accuracy is {}'.format(accuracy_score(y_test[label], prediction)))
-print("\n Accuracy_nb: {}".format(accuracy_nb))
+nb_clf, nb_vectorizer, nb_sumry = train_model(n_bayes, corpus, df[labels] )
+
+
+# In[51]:
+
+
+summary_nb = pd.DataFrame(nb_sumry, index = ['accuracy', 'jaccard score', 'F1_score', 'roc_score'], columns= [nb_clf.estimators_[0]])
+summary_nb
+
+
+# <br>
+# Lets do testing on unseen data
+
+# In[52]:
+
+
+input_str = ["that is so good, i am so happy bitch"]
+input_str = clean(input_str[0])
+input_str = process_txt(input_str, stemm= True)
+input_str = nb_vectorizer.transform([input_str])
+input_str
+
+
+# In[53]:
+
+
+### Open the saved mode.pkl
+pkl_file = os.path.join(dir_path, 'model', 'MultinomialNB')
+open_file = open(pkl_file, "rb")
+model = pickle.load(open_file)
+open_file.close()
 
 
 # In[54]:
 
 
-accuracy_lr_tfidf = [0.9260271225528288, 0.9898478429799714, 0.9656832025668663, 0.9973679592911037, 0.958213220364475, 0.9910510615897525]
-accuracy_nb_tfidf = [0.9245983004537137, 0.989822775925601, 0.9633519665104153, 0.9973679592911037, 0.9569348005915825, 0.9910510615897525]     
+model
 
 
-# In[59]:
+# In[55]:
 
 
-accuracy_lr_bow = [0.9107612864412303, 0.9899982453061941, 0.9515704509563081, 0.9973679592911037, 0.950993908705788, 0.9910259945353821]
-accuracy_nb_bow = [0.9192590178728097, 0.987040332890482, 0.965608001403755, 0.9946857844734666, 0.9576868122226957, 0.9866893941292959]    
+model.predict(input_str)
 
 
-# In[60]:
-
-
-## Linear regression accuracies compaired
-accuracy_lr_tfidf == accuracy_lr_bow
-
-
-# In[61]:
-
-
-## Naive Bayes accuracies compaired
-accuracy_nb_tfidf == accuracy_nb_bow
-
-
+# # Check if it needs to stay here
 # **`Bag-of-Words` and `TF-IDF`**
 # <br>Accuracies for `Bag-of-Words` and `TF-IDF` are not same but their difference is also not very significant for both Linear regression and Naive Bayes 
 # <br>Accuracy remained same - `Identity hate`, `threat`
@@ -210,277 +335,269 @@ accuracy_nb_tfidf == accuracy_nb_bow
 # 
 
 # **Naive Bayes or Logistic regression !!**
-# <br>Naive Bayes is tend to even faster in training but it provide generalized performance that is slightly worse than that of logistic regression model.
-# Just yet we can't decide, we need to try different model evaluation techniqes first
+# <br>Compairing the confusion matrixs and Jaccard score, Naive Bayes clearly out performed Linear regression and Naive Bayes even tends to get trained faster.
+# Just yet we can't decide, we need to try different model evaluation techniqes first.
 
 # ### K FOLD CROSS VALIDATION
 
-# Here, we need to convert complete dataset comments to word embeddings before doing cross-validation and word_embedding funtion works if dataset is already divided into Train-Test.  but for now we are converting dataset comments in word embeddings without using the function. later we will make a better way to do this.
+# #### K Fold cross validation with Gridsearch for Logistic Regression 
 
-# In[86]:
+# We will use GridSearchCV to evaluate the model using different values of **C**
 
-
-bw_vectorizer = feature_extraction.text.CountVectorizer(max_features= 100)
-X = bw_vectorizer.fit_transform(corpus).toarray()
+# In[9]:
 
 
-# In[65]:
+param_grid = {"estimator__C": [0.001, 0.01, 0.1, 1, 10, 100]}
 
 
-### Linear regression 
-cv_accuracy_lr = []
-accuracy_lr = []
-for label in labels:
-    print('... Processing {}'.format(label))
-    # train the model 
-    logreg = OneVsRestClassifier(LogisticRegression(solver='sag'))
-    logreg.fit(Xv_train, y_train[label])
-    # compute the testing accuracy
-    prediction = logreg.predict(Xv_test)
-    score = (accuracy_score(y_test[label], prediction))
-    cv_score= cross_val_score(logreg,X,df[labels],cv=10)
-    accuracy_lr.append(score)
-    
-    print('Validation accuracy is {}'.format(accuracy_score(y_test[label], prediction)))
-    print('\n cv_score = {}'.format(cv_score))
-print("\n Accuracy_lr: {}".format(accuracy_lr))
+# In[10]:
 
 
-# ### Linear regeression accuracy summery
-# <br>... Processing toxic
-# <br>Validation accuracy is 0.9107612864412303
-# <br>cv_score = [0.90092743, 0.89509306, 0.9011719,  0.90148524, 0.89816382, 0.90273861,
-#  0.90029454, 0.90004387, 0.90161058, 0.89822648]
-#  
-# <br>... Processing severe_toxic
-# <br>Validation accuracy is 0.9900233123605645
-# <br>cv_score = [0.90092743, 0.89509306, 0.9011719,  0.90148524, 0.89816382, 0.90273861,
-#  0.90029454, 0.90004387, 0.90161058, 0.89822648]
-#  
-# <br>... Processing obscene
-# <br>Validation accuracy is 0.9515955180106785
-# <br>cv_score = [0.90092743, 0.89509306, 0.9011719,  0.90148524, 0.89816382, 0.90273861,
-#  0.90029454, 0.90004387, 0.90161058, 0.89822648]
-# 
-# <br>... Processing threat
-# <br>Validation accuracy is 0.9973679592911037
-# <br>cv_score = [0.90092743, 0.89509306, 0.9011719,  0.90148524, 0.89816382, 0.90273861,
-#  0.90029454, 0.90004387, 0.90161058, 0.89822648]
-#  
-# <br>... Processing insult
-# <br>Validation accuracy is 0.9509688416514176
-# <br>cv_score = [0.90092743, 0.89509306, 0.9011719,  0.90148524, 0.89816382, 0.90273861,
-#  0.90029454, 0.90004387, 0.90161058, 0.89822648]
-#  
-# <br>... Processing identity_hate
-# <br>Validation accuracy is 0.9910259945353821
-# <br>cv_score = [0.90092743, 0.89509306, 0.9011719,  0.90148524, 0.89816382, 0.90273861,
-#  0.90029454, 0.90004387, 0.90161058, 0.89822648]
+#Train-test split
+print("... Performing train test split")
+X_train, X_test, y_train, y_test = model_selection.train_test_split(corpus,df[labels],
+                                                                    test_size=0.25,random_state=42)
 
-# In[88]:
+
+# In[11]:
+
+
+## Features extraction with word embedding
+print("... Extracting features")
+Xv_train, Xv_test, vectorizer = get_embeddings(X_train, X_test,
+                                                          max_feature = 1000 , embedding_type= 'bow')
+
+
+# In[14]:
+
+
+# clf_lr = OneVsRestClassifier(logreg)
+
+
+# In[15]:
+
+
+# gs_lr = GridSearchCV(clf_lr, param_grid ,scoring = 'f1_micro', cv=3)
+
+
+# In[16]:
+
+
+# gs_lr.fit(Xv_train, y_train)
+
+
+# In[26]:
+
+
+print("Accuracy score of the best estimator : {}".format(gs_lr.score(Xv_test, y_test )))
+
+
+# In[28]:
+
+
+print("Best estimator is : {}".format(gs_lr.best_estimator_))
+
+
+# <br>
+# As we can see that *Logistic Regression* performed well with **C = 0.1**. on 3 Folds of cross validation. We will use this value with the various combination of *maximum_features* and *embedding type* in next part to check the performance of *Logistic Regression*
+
+# In[66]:
+
+
+#### Naive Bayes with K-fold cross validation
+
+
+# In[68]:
 
 
 ### Naive bayes
-accuracy_nb = []
-for label in labels:
-    print('\n... Processing {}'.format(label))
-    # train the model 
-    nbayes = OneVsRestClassifier(naive_bayes.MultinomialNB())
-    nbayes.fit(Xv_train, y_train[label])
-    # compute the testing accuracy
-    prediction = nbayes.predict(Xv_test)
-    score = (accuracy_score(y_test[label], prediction))
-    cv_score= cross_val_score(nbayes,X,df[labels],cv=10)
-    accuracy_nb.append(score)
-    print('Validation accuracy is {}'.format(score))
-    print('cv_score = {}'.format(cv_score))
-print("\n Accuracy_nb: {}".format(accuracy_nb))
+nbayes = OneVsRestClassifier(naive_bayes.MultinomialNB())
+nbayes.fit(Xv_train, y_train)
+cv_score= cross_val_score(nbayes,Xv_train,y_train,cv=3)
+print('Naive Bayes Cross Validation score = {}'.format(cv_score))
 
 
-# ### Naive Bayes Accuracy Summary
 # <br>
-# ... Processing toxic
-# <br>Validation accuracy is 0.9192590178728097
-# <br>cv_score = [0.89478631, 0.89108228, 0.89315034, 0.89503039, 0.89227298, 0.8975998,
-#  0.89578242, 0.89496773, 0.8965971,  0.8916463 ]
-# 
-# <br>... Processing severe_toxic
-# <br>Validation accuracy is 0.987040332890482
-# <br>cv_score = [0.89478631, 0.89108228, 0.89315034, 0.89503039, 0.89227298, 0.8975998,
-#  0.89578242, 0.89496773, 0.8965971,  0.8916463 ]
-# 
-# <br>... Processing obscene
-# <br>Validation accuracy is 0.965608001403755
-# <br>cv_score = [0.89478631, 0.89108228, 0.89315034, 0.89503039, 0.89227298, 0.8975998,
-#  0.89578242, 0.89496773, 0.8965971,  0.8916463 ]
-# 
-# <br>... Processing threat
-# <br>Validation accuracy is 0.9946857844734666
-# <br>cv_score = [0.89478631, 0.89108228, 0.89315034, 0.89503039, 0.89227298, 0.8975998,
-#  0.89578242, 0.89496773, 0.8965971,  0.8916463 ]
-# 
-# <br>... Processing insult
-# <br>Validation accuracy is 0.9576868122226957
-# <br>cv_score = [0.89478631, 0.89108228, 0.89315034, 0.89503039, 0.89227298, 0.8975998,
-#  0.89578242, 0.89496773, 0.8965971,  0.8916463 ]
-# 
-# <br>... Processing identity_hate
-# <br>Validation accuracy is 0.9866893941292959
-# <br>cv_score = [0.89478631, 0.89108228, 0.89315034, 0.89503039, 0.89227298, 0.8975998,
-#  0.89578242, 0.89496773, 0.8965971,  0.8916463 ]
-# 
-#  <br>Accuracy_nb: [0.9192590178728097, 0.987040332890482, 0.965608001403755, 0.9946857844734666, 0.9576868122226957, 0.9866893941292959]
+# We can see even with the K-fold cross validation *Naive Bayes* is giving consistant results for the accuracy
+
+# ## Best Model Selection
+
+# In[72]:
+
+
+logreg = LogisticRegression(solver='sag', C= 0.1)
+classifier = [logreg, n_bayes]
+max_feature = [1200, 1500, 1700, 2000]
+embedding= ['bow', 'tfidf']
+
+
+# In[73]:
+
+
+summary_report =  []
+combinations =[]
+best_jscore = 1
+for estimator in classifier:
+  print(".... Processing {}".format(estimator))
+  for m in max_feature:
+    for n in embedding:
+      print(".... Combination {}, {} ".format(m,n))
+      combinations.append((estimator.__class__.__name__, m, n))
+      clf, vectorizer, score_sumry = train_model(estimator, corpus, df[labels], max_feature=m, embedding= n )
+      summary_report.append(score_sumry)
+      if score_sumry[1] > best_jscore:
+        best_jscore =score_sumry[1]
+        best_param = {"classifier": clf.__class__.__name__, "max_features": m, "embedding_type":n}
+      
+      
+print(summary_report)
+print(best_param)      
+
+
+# In[74]:
+
+
+summary_r = pd.DataFrame(summary_report, index = [combinations], columns= ['accuracy', 'jaccard score', 'F1_score', 'roc_score'],)
+summary_r
+
+
+# In[75]:
+
+
+summary_all_combinations = summary_r.sort_values(by=['jaccard score'],ascending=False)
+summary_all_combinations
+
+
+# with **C =0.1** logistic regression is doing much worst that **C= 1**
 
 # ### Stratified K Fold Cross Validation
 
 # In[ ]:
 
 
-from sklearn.model_selection import StratifiedKFold
+Xc = corpus
 
 
-# In[79]:
-
-
-Xc =corpus
-
+# **Logistic Regression**
 
 # In[ ]:
 
 
 skf_lr_accuracy = []
 for label in labels:
-    print('... Processing {}'.format(label))
-    # train the model 
-    logreg = OneVsRestClassifier(LogisticRegression(solver='sag'))
+    print('\n... PROCESSING {}'.format(label.upper()))
+    # train the model
+    clf = logreg
 
-    skf = StratifiedKFold(n_splits=10)
-    skf.get_n_splits(X,df[label])
-    lr_label_score = []
+    
+    skf = StratifiedKFold(n_splits=5)
+    skf.get_n_splits(Xc,df[label])
+    
+    score_lr_acc = []
+    score_lr_jaccard = []
+    score_lr_roc = []
+    score_lr_f1 = []
+    i = 1
     for train_index, test_index in skf.split(Xc,df[label]):
-      Y = df[label]
-      #print("Train:", train_index, "validation:", test_index)
-      X1_train, x1_test = Xc.iloc[train_index], Xc.iloc[test_index]
-      y1_train, y1_test = Y.iloc[train_index], Y.iloc[test_index]
+        Y = df[label]
+        #print("Train:", train_index, "validation:", test_index)
+        X1_train, x1_test = Xc.iloc[train_index], Xc.iloc[test_index]
+        y1_train, y1_test = Y.iloc[train_index], Y.iloc[test_index]
 
-      ### Convert into word embeddings
-      bw_vectorizer = feature_extraction.text.CountVectorizer(max_features= 100)
-      X1_train = bw_vectorizer.fit_transform(X1_train).toarray()
-      x1_test = bw_vectorizer.fit_transform(x1_test).toarray()
+        ### Convert into word embeddings
+        train_feat, test_feat, vectorizer = get_embeddings(X1_train,x1_test)
+#       bw_vectorizer = feature_extraction.text.CountVectorizer(max_features= 100)
+#       X1_train = bw_vectorizer.fit_transform(X1_train).toarray()
+#       x1_test = bw_vectorizer.fit_transform(x1_test).toarray()
+
+        clf.fit(train_feat, y1_train)
+        prediction_lr = clf.predict(test_feat)
+        
+        acc_lr_score = accuracy_score(y1_test,prediction_lr)
+        score_lr_acc.append(acc_lr_score)
+        
+        jaccard_lr = j_score(pd.DataFrame(y1_test),pd.DataFrame(prediction_lr))
+        score_lr_jaccard.append(jaccard_lr)
+        
+        roc_lr = roc_auc_score(y1_test,prediction_lr)
+        score_lr_roc.append(roc_lr)
+        
+        print("----- Processed {} fold".format(i))
+        print(print_score(prediction_lr, y1_test, clf))
+        
+        i = i+1
+        
+    print("Model evaluation")
+    print("------")
+    print("ROC_AUC - {}".format(score_lr_roc))
+    print('Average accuracy for 5 Kfolds in {} category {}'.format(label, np.array(score_lr_acc).mean()))
+    print("------")
+    #print(type(score))
+    skf_lr_accuracy.append(np.array(score_lr_acc).mean())
+print("\n Mean accuracies of all six labeles: {}".format(skf_lr_accuracy))
+    
 
 
-      logreg.fit(X1_train, y1_train)
-      prediction = logreg.predict(x1_test)
-      score = (accuracy_score(y1_test,prediction))
-      lr_label_score.append(score)
-    print('Validation accuracy of 10 Kfold is {}'.format(lr_label_score))
-    skf_lr_accuracy.append(lr_label_score)
-
-print("\n skf_lr_accuracy: {}".format(skf_lr_accuracy))
-
-
-# In[95]:
-
-
-# ## Resultant accuracies of Linear regression model using Stratified K Fold Cross Validation
-
-# skf_lr_accuracy: [[0.9048752976563479, 0.913141567963903,
-#                    0.9244218838127467, 0.9134549100708154,
-#                    0.9128908942783731, 0.9118881995362537,
-#                    0.9115748574293413, 0.8985398257817886,
-#                    0.9031146205427085, 0.8975997994610516], 
-#                   [0.9899110164180975, 0.9899730525788055,
-#                    0.9904117315284828, 0.9904743999498653,
-#                    0.9902237262643354, 0.9897223788932756,
-#                    0.9899730525788055, 0.9899730525788055,
-#                    0.9899730525788055, 0.990035721000188], 
-#                   [0.947487153778669, 0.9534373629128282,
-#                    0.9636523155981701, 0.9537507050197406, 
-#                    0.9533120260700633, 0.9524346681707088, 
-#                    0.9528733471203861, 0.9437237575985461,
-#                    0.9461678260324622, 0.9414050260073948],
-#                   [0.9969921042737185, 0.9970545841950241, 
-#                    0.9970545841950241, 0.9969919157736417,
-#                    0.9969919157736417, 0.9969919157736417,
-#                    0.9969919157736417, 0.9969919157736417, 
-#                    0.9969919157736417, 0.9969919157736417], 
-#                   [0.9510590299536282, 0.9517453155355017, 
-#                    0.9538760418625055, 0.9540013787052705, 
-#                    0.9525600050134737, 0.9519333207996491, 
-#                    0.9513066365858244, 0.9505546155292348, 
-#                    0.9508679576361472, 0.9503666102650874], 
-#                   [0.9911016418097506, 0.9912264210064549,
-#                    0.9912264210064549, 0.9911637525850724,
-#                    0.9912264210064549, 0.9912264210064549,
-#                    0.9911637525850724, 0.9911637525850724,
-#                    0.9911637525850724, 0.9911637525850724]]
-
+# <br>
+# **Naive Bayes**
 
 # In[ ]:
 
 
+classifier = n_bayes
 skf_nb_accuracy = []
 for label in labels:
-    print('\n... Processing {}'.format(label))
-    # train the model 
-    nbayes = OneVsRestClassifier(naive_bayes.MultinomialNB())
+    print('\n... PROCESSING {}'.format(label.upper()))
+    # train the model
+    classifier = n_bayes
 
     
-    skf = StratifiedKFold(n_splits=10)
-    skf.get_n_splits(X,df[label])
+    skf = StratifiedKFold(n_splits=5)
+    skf.get_n_splits(Xc,df[label])
     
     score_label = []
+    score_nb_jaccard = []
+    score_nb_roc = []
+    score_nb_f1 = []
+    i = 1
     for train_index, test_index in skf.split(Xc,df[label]):
-      Y = df[label]
-      #print("Train:", train_index, "validation:", test_index)
-      X1_train, x1_test = Xc.iloc[train_index], Xc.iloc[test_index]
-      y1_train, y1_test = Y.iloc[train_index], Y.iloc[test_index]
+        Y = df[label]
+        #print("Train:", train_index, "validation:", test_index)
+        X1_train, x1_test = Xc.iloc[train_index], Xc.iloc[test_index]
+        y1_train, y1_test = Y.iloc[train_index], Y.iloc[test_index]
 
-      ### Convert into word embeddings
-      bw_vectorizer = feature_extraction.text.CountVectorizer(max_features= 100)
-      X1_train = bw_vectorizer.fit_transform(X1_train).toarray()
-      x1_test = bw_vectorizer.fit_transform(x1_test).toarray()
+        ### Convert into word embeddings
+        train_feat, test_feat, vectorizer = get_embeddings(X1_train,x1_test)
+#       bw_vectorizer = feature_extraction.text.CountVectorizer(max_features= 100)
+#       X1_train = bw_vectorizer.fit_transform(X1_train).toarray()
+#       x1_test = bw_vectorizer.fit_transform(x1_test).toarray()
 
-
-      nbayes.fit(X1_train, y1_train)
-      prediction = nbayes.predict(x1_test)
-      score = accuracy_score(y1_test,prediction)
-      score_label.append(score)
-      
-    print('Validation accuracy for 10 Kfolds {}'.format(score_label))
+        classifier.fit(train_feat, y1_train)
+        prediction = classifier.predict(test_feat)
+        
+        acc_score = accuracy_score(y1_test,prediction)
+        score_label.append(acc_score)
+        
+        jaccard_nb = j_score(pd.DataFrame(y1_test),pd.DataFrame(prediction))
+        score_nb_jaccard.append(jaccard_nb)
+        
+        roc_nb = roc_auc_score(y1_test,prediction)
+        score_nb_roc.append(roc_nb)
+        
+        print("----- Processed {} fold".format(i))
+        print(print_score(prediction, y1_test, classifier))
+        
+        i = i+1
+        
+    print("Model evaluation")
+    print("------")
+    print("ROC_AUC - {}".format(score_nb_roc))
+    print('Average accuracy for 5 Kfolds in {} category {}'.format(label, np.array(score_label).mean()))
+    print("------")
     #print(type(score))
-    skf_nb_accuracy.append(score_label)
-    print("\n skf_nb_accuracy: {}".format(skf_nb_accuracy))
-
-
-# In[89]:
-
-
-# ## Resultant accuracies of Naive Bayes model using Stratified K Fold Cross Validation
-# skf_nb_accuracy: [[0.9036846722646948, 0.923105846963715, 0.9217898101146832,
-#                    0.9155856363978191, 0.9162749890330263, 0.9214137995863885,
-#                    0.9229805101209501, 0.8621294729585762, 0.8815566835871405,
-#                    0.856990662405214], [0.9898483519237999, 0.98652628940277, 
-#                                         0.9868396315096822, 0.9872156420379771,
-#                                         0.9860249420317102, 0.9879049946731842,
-#                                         0.98652628940277, 0.9854609262392681, 
-#                                         0.9884063420442439, 0.9845208999185311], 
-#                   [0.9476751472615615, 0.9664097261389986, 0.9652190261327317, 
-#                    0.9643416682333772, 0.9653443629754966, 0.9652816945541142,
-#                    0.9652190261327317, 0.913956257441875, 0.9361408786112678, 
-#                    0.914896283762612], [0.9956761498934703, 0.9944225104969606,
-#                                         0.9940464999686658, 0.9952998683963151, 
-#                                         0.9937958262831359, 0.9952371999749327,
-#                                         0.9950491947107852, 0.9949865262894028,
-#                                         0.9952371999749327, 0.9964278999811995],
-#                   [0.9498684045619752, 0.9585135050448079, 0.9587641787303378, 
-#                    0.956508115560569, 0.9570094629316288, 0.9585135050448079,
-#                    0.9590775208372501, 0.9292473522591966, 0.9454158049758726,
-#                    0.9251112364479539], [0.9896603584409074, 0.9867142946669173,
-#                                          0.9870903051952121, 0.986400952560005, 
-#                                          0.985586263082033, 0.9864636209813875, 
-#                                          0.9874036473021245, 0.9851475841323557,
-#                                          0.9895970420505108, 0.9870276367738297]]
+    skf_nb_accuracy.append(np.array(score_label).mean())
+print("\n Mean accuracies of all six labeles: {}".format(skf_nb_accuracy))
+    
 
 
 # ### Trying multiple values of C in Linear regression model using simple Train-Test split method
@@ -512,10 +629,125 @@ print("\n Best accuracy : {}".format(best_accuracy))
 print("Best parameter : {}".format(best_c_value))
 
 
-# In[98]:
+# In[ ]:
 
 
 # Output of above cell
 # Best accuracy : {'toxic': 0.9107612864412303, 'severe_toxic': 0.9900233123605645, 'obscene': 0.9515955180106785, 'threat': 0.9973679592911037, 'insult': 0.9509688416514176, 'identity_hate': 0.9910259945353821}
 # Best parameter : {'toxic': 0.1, 'severe_toxic': 0.001, 'obscene': 0.1, 'threat': 0.001, 'insult': 0.1, 'identity_hate': 0.001}
+
+
+# In[21]:
+
+
+##### Old version to try Kfolf CV
+
+# ### OneVsRestClassifier
+# for classifier in [n_bayes,logreg]:
+    
+#     print('... Processing {}'.format(classifier))
+    
+#     #Train-test split
+#     print("... Performing train test split")
+#     X_train, X_test, y_train, y_test = model_selection.train_test_split(corpus,df[labels],
+#                                                                     test_size=0.25,random_state=42)
+    
+#     ## Features extraction with word embedding
+#     print("... Extracting features")
+#     Xv_train, Xv_test, vectorizer = get_embeddings(X_train, X_test,
+#                                                           max_feature = 1000 , embedding_type= 'bow')
+    
+#     # train the model 
+#     print('... Training {} model'.format(classifier.__class__.__name__))
+    
+#     # train the model 
+#     clf = OneVsRestClassifier(classifier)
+#     clf.fit(Xv_train, y_train)
+
+#     # compute the testing accuracy
+#     prediction = clf.predict(Xv_test)
+    
+#     score = (accuracy_score(y_test, prediction))
+#     cv_score= cross_val_score(classifier,corpus,df[labels],cv=5)
+#     roc_lr = roc_auc_score(y1_test,prediction_lr)
+    
+#     ## Save model
+#     pkl_file = os.path.join(dir_path,'model', classifier.__class__.__name__)
+#     file = open(pkl_file,"wb")
+#     pickle.dump(clf,file)
+#     file.close()
+    
+#     #### Prediction on comment 
+        
+#     input_str = ["i'm going to kill you nigga, you are you sick or mad, i don't like you at all"]
+#     input_str = clean(input_str[0])
+#     input_str = process_txt(input_str, stemm= True)
+#     input_str = vectorizer.transform([input_str])
+    
+#     print("KFold score {}".format(cv_score))
+#     print(print_score(prediction, y_test, classifier))
+#     print(print("check model accuracy on input_string {}".format(clf.predict(input_str))))
+#     print('Validation accuracy is {}'.format(score))
+#     print("------")
+    
+
+
+# In[22]:
+
+
+# ### Linear regression for kfold CV
+# cv_accuracy_lr = []
+# accuracy_lr = []
+# for label in labels:
+#     print('... Processing {}'.format(label))
+#     # train the model 
+#     clf = OneVsRestClassifier(logreg)
+#     clf.fit(Xv_train, y_train[label])
+#     # compute the testing accuracy
+#     prediction = logreg.predict(Xv_test)
+#     score = (accuracy_score(y_test[label], prediction))
+#     cv_score= cross_val_score(logreg,X,df[labels],cv=10)
+#     accuracy_lr.append(score)
+    
+#     print('Validation accuracy is {}'.format(accuracy_score(y_test[label], prediction)))
+#     print('\n cv_score = {}'.format(cv_score))
+# print("\n Accuracy_lr: {}".format(accuracy_lr))
+
+
+# In[ ]:
+
+
+# ### Naive bayes
+# accuracy_nb = []
+# for label in labels:
+#     print('\n... Processing {}'.format(label))
+#     # train the model 
+#     nbayes = OneVsRestClassifier(naive_bayes.MultinomialNB())
+#     nbayes.fit(Xv_train, y_train[label])
+#     # compute the testing accuracy
+#     prediction = nbayes.predict(Xv_test)
+#     score = (accuracy_score(y_test[label], prediction))
+#     cv_score= cross_val_score(nbayes,X,df[labels],cv=10)
+#     accuracy_nb.append(score)
+#     print('Validation accuracy is {}'.format(score))
+#     print('cv_score = {}'.format(cv_score))
+# print("\n Accuracy_nb: {}".format(accuracy_nb))
+
+
+# In[61]:
+
+
+#Train-test split
+print("... Performing train test split")
+X_train, X_test, y_train, y_test = model_selection.train_test_split(corpus,df[labels],
+                                                                    test_size=0.25,random_state=42)
+
+
+# In[62]:
+
+
+## Features extraction with word embedding
+print("... Extracting features")
+Xv_train, Xv_test, vectorizer = get_embeddings(X_train, X_test,
+                                                          max_feature = 1000 , embedding_type= 'bow')
 
