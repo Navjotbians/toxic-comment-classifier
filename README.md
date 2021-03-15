@@ -25,7 +25,8 @@ import seaborn
 ```
 Start importing these necessary packages. If you have not installed these packages,you can install them by typing the below command in the terminal.
 <br>`pip install requirements.txt`
-<br>If multilabel_confusion_matrix doesn’t get imported from Sklearn
+<br>>
+<br>If multilabel_confusion_matrix doesn’t get imported from Sklearn, install it with below command
 <br>`pip install git+http://github.com/scikit-learn/scikit-learn.git`
 
 
