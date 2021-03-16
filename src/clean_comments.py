@@ -10,7 +10,8 @@ def clean(input_str):
     for sub in SUBSTITUTIONS:
         input_str = re.sub(sub[0], sub[1], input_str)
     
-    input_str = input_str.translate(str.maketrans('','', string.punctuation))		# Eliminate punchuation
+    # Eliminate punchuation
+    input_str = input_str.translate(str.maketrans('','', string.punctuation))		
     input_str = input_str.strip()
     
     return input_str

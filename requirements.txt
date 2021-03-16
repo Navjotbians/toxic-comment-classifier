@@ -3,6 +3,7 @@ alabaster==0.7.10
 anaconda-client==1.6.14
 anaconda-navigator==1.8.7
 anaconda-project==0.8.2
+appdirs==1.4.4
 asn1crypto==0.24.0
 astor==0.7.1
 astroid==1.6.3
@@ -44,6 +45,7 @@ dask==0.17.5
 datashape==0.5.4
 decorator==4.3.0
 defusedxml==0.6.0
+distlib==0.3.1
 distributed==1.21.8
 dlib==19.16.0
 docutils==0.14
@@ -68,6 +70,7 @@ idna==2.6
 imageio==2.3.0
 imagesize==1.0.0
 importlib-metadata==0.23
+importlib-resources==5.1.2
 imutils==0.5.1
 ipykernel==4.8.2
 ipython==6.4.0
@@ -78,6 +81,7 @@ itsdangerous==0.24
 jdcal==1.4
 jedi==0.12.0
 Jinja2==2.10
+joblib==1.0.1
 jsonschema==2.6.0
 jupyter==1.0.0
 jupyter-client==5.2.3
@@ -184,7 +188,7 @@ requests==2.18.4
 rope==0.10.7
 ruamel-yaml==0.15.35
 scikit-image==0.13.1
-scikit-learn==0.19.1
+scikit-learn==1.0.dev0
 scipy==1.1.0
 seaborn==0.8.1
 Send2Trash==1.5.0
@@ -211,6 +215,7 @@ termcolor==1.1.0
 terminado==0.8.1
 testpath==0.3.1
 Theano==1.0.3
+threadpoolctl==2.1.0
 toolz==0.9.0
 tornado==5.0.2
 tqdm==4.38.0
@@ -219,6 +224,7 @@ typed-ast==1.4.0
 typing==3.6.4
 unicodecsv==0.14.1
 urllib3==1.22
+virtualenv==20.4.2
 wcwidth==0.1.7
 webencodings==0.5.1
 Werkzeug==0.14.1

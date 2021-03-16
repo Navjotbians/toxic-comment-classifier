@@ -1,15 +1,25 @@
 from flask import Flask, request, render_template
 import pickle
+import os
+
+dir_path = os.getcwd()
 
 app = Flask(__name__)
 
-clf = pickle.load(open('model/MultinomialNB', 'rb'))
-vectorizer = pickle.load(open('model/bw_vectorizer1000.pkl', 'rb'))
+clf_file = os.path.join(dir_path, 'model', 'final_model.pkl')
+clf = pickle.load(open(clf_file, 'rb'))
+
+# 'model/final_vectorizer.pkl'
+# 'model/final_model.pkl'
+
+### load vectorizer
+vec_file = os.path.join(dir_path, 'model', 'final_vectorizer.pkl')
+vectorizer = pickle.load(open(vec_file, 'rb'))
 
 @app.route('/')
 
 def my_form():
-	return render_template('form.html')
+	return render_template('form1.html', p = "")
 
 # @app.route('/', methods=['POST'])
 # def my_form_post():
@@ -31,15 +41,16 @@ def check_toxicity():
 		if i == 1:
 			predc.append(j)
 	if len(predc)== 0:
-		i ='comment in not toxic'
+		i ='Comment is not toxic'
+		return render_template('form1.html', p = i)
 	else:
 		i = str(predc)
-
+		return render_template('form1.html', p = i)
 
 	return i
 
 	
 
 if __name__ == '__main__':
-	app.run(use_reloader = True)
+	app.run(port = 13000, use_reloader = True, debug=True)
 

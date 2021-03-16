@@ -5,14 +5,14 @@
 
 # #### Import all the required packages
 
-# In[ ]:
+# In[21]:
 
 
 import os
 dir_path = os.path.dirname(os.getcwd())
 
 
-# In[59]:
+# In[22]:
 
 
 import pandas as pd
@@ -36,48 +36,54 @@ from processing import process_txt
 
 # #### load processed dataset
 
-# In[3]:
+# In[24]:
 
 
 processed_data = os.path.join(dir_path, 'data', 'processed', 'processed_stem_data.csv')
 
 
-# In[4]:
+# In[25]:
 
 
 df = pd.read_csv(processed_data)
 
 
-# In[5]:
+# In[26]:
+
+
+df.head()
+
+
+# In[27]:
 
 
 ### fill NA for any missing data 
 df['comment_text'].fillna("missing", inplace=True)
 
 
-# In[6]:
+# In[28]:
 
 
 labels = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
 corpus = df['comment_text']
 
 
-# ### Split the date into train test datasets
+# ### Distribution of classes we are getting after train test split
 
-# In[ ]:
+# In[8]:
 
 
 X_train, X_test, y_train, y_test = model_selection.train_test_split(corpus,df[labels],
                                                                     test_size=0.25,random_state=42)
 
 
-# In[ ]:
+# In[9]:
 
 
 X_train.shape, X_test.shape
 
 
-# In[ ]:
+# In[10]:
 
 
 # Stats of X_train labels
@@ -88,7 +94,7 @@ df_stats = pd.DataFrame(counts, columns=['Labels', 'number_of_comments'])
 df_stats
 
 
-# In[ ]:
+# In[11]:
 
 
 #stats of X_test labels
@@ -125,45 +131,15 @@ df_stats
 
 # We will try Bag-of-Words and TF-IDFto get our features for `X_train`  and `X_test` data. The resultant embeddings are in numpy array format, if we have a look at the the embeddings we will know it is high dimensional sparse data.
 
-# In[ ]:
-
-
-pkl_file = os.path.join(dir_path, 'model','bw_vectorizer1000.pkl' )
-
-
-# In[ ]:
-
-
-# Save vectorizer
-file = open(pkl_file,"wb")
-pickle.dump(bw_vectorizer,file)
-file.close()
-
-
-# In[ ]:
-
-
-# ### Open the saved vectorizer
-# open_file = open(pkl_file, "rb")
-# bw_vectorizer = pickle.load(open_file)
-# open_file.close()
-
-
-# In[ ]:
-
-
-Xv_train = train_feat
-
-
-# In[ ]:
-
-
-Xv_test = test_feat
-
-
 # ### Matrix used to evaluate the models
 
-# In[32]:
+# Multi-label classification problems must be assessed using different performance measures than single-label classification problems.
+
+# Jaccard similarity, or the Jaccard index, is the size of the intersection of the predicted labels and the true labels divided by the size of the union of the predicted and true labels. It ranges from 0 to 1, and 1 is the perfect score.Here we are taking mean so 100 is perfect score. This function can be imported from *Sklearn.metrics* but just to have better usderstanding we are defining the `j_score` function
+
+# We will also look at *F1-score* and *ROC score*
+
+# In[29]:
 
 
 def j_score(y_true, y_pred):
@@ -171,7 +147,7 @@ def j_score(y_true, y_pred):
     return jaccard.mean()*100
 
 
-# In[33]:
+# In[30]:
 
 
 def print_score(y_pred, y_test, clf):
@@ -183,7 +159,7 @@ def print_score(y_pred, y_test, clf):
 
 # ### Training
 
-# In[34]:
+# In[31]:
 
 
 ### OneVsRestClassifier
@@ -205,7 +181,7 @@ def train_model(classifier,X, y, max_feature = 1000, embedding= 'bow' ):
     clf.fit(Xv_train, y_train)
 
     # compute the test accuracy
-    print("...Computing accuracy")
+    print("... Computing accuracy")
     prediction = clf.predict(Xv_test)
 
     ## Accuracy score
@@ -218,13 +194,14 @@ def train_model(classifier,X, y, max_feature = 1000, embedding= 'bow' ):
     
     
     ## Save model
-    print("...Saving model in model directory")
+    print("... Saving model in model directory")
     pkl_file = os.path.join(dir_path,'model', classifier.__class__.__name__)
     file = open(pkl_file,"wb")
     pickle.dump(clf,file)
     file.close()
     
-     #### Prediction on comment 
+    #### Testing purpose only #### 
+    #### Prediction on comment ### 
 
     input_str = ["i'm going to kill you nigga, you are you sick or mad, i don't like you at all"]
     input_str = clean(input_str[0])
@@ -246,14 +223,16 @@ def train_model(classifier,X, y, max_feature = 1000, embedding= 'bow' ):
     
 
 
-# In[35]:
+# ### Initiate models
+
+# In[32]:
 
 
 n_bayes = naive_bayes.MultinomialNB()
 logreg = LogisticRegression(solver='sag')
 
 
-# #### With simple Train-Test split
+# #### Train with simple Train-Test split
 
 # Which model to use?
 # <br>
@@ -371,18 +350,21 @@ Xv_train, Xv_test, vectorizer = get_embeddings(X_train, X_test,
 # In[14]:
 
 
+## Uncomment to reproduce results
 # clf_lr = OneVsRestClassifier(logreg)
 
 
 # In[15]:
 
 
+## Uncomment to reproduce results
 # gs_lr = GridSearchCV(clf_lr, param_grid ,scoring = 'f1_micro', cv=3)
 
 
-# In[16]:
+# In[25]:
 
 
+## Uncomment to run GridSerch with K-fold cross validation
 # gs_lr.fit(Xv_train, y_train)
 
 
@@ -422,7 +404,7 @@ print('Naive Bayes Cross Validation score = {}'.format(cv_score))
 
 # ## Best Model Selection
 
-# In[72]:
+# In[33]:
 
 
 logreg = LogisticRegression(solver='sag', C= 0.1)
@@ -469,6 +451,96 @@ summary_all_combinations
 
 
 # with **C =0.1** logistic regression is doing much worst that **C= 1**
+
+# Its evident from above results that *Logistic Regression* perform well with continuous data (when features were computed with "TF-IDF") and *Naive Bayes* do good when data is in discrete form (When features were computer with "Bag-of Words"). Considering *Jaccard score*, *F1-score*, and *ROC_AUC score* **Naive Bayes** perform well, though when we train *Logistic Regression* with **C=1**, it does perform better than *Naive Bayes* only in terms of *Jaccard score*. I am sure with further fine tuning of the hyper parameters, we could get good *Logistic Regression* Model but its is quite expensive to get there in terms of computations and time. So we will go with **Naive Bayes** using *"Bag-of-Words"* embedding technique with *max_features* count as 2000
+
+# ## Training the best model
+
+# In[34]:
+
+
+### OneVsRestClassifier
+def train_model(classifier,X, y, max_feature = 1000, embedding= 'bow' ):
+
+    #Train-test split
+    print("... Performing train test split")
+    X_train, X_test, y_train, y_test = model_selection.train_test_split(X,y,
+                                                                    test_size=0.25,random_state=42)
+    
+    ## Features extraction with word embedding
+    print("... Extracting features")
+    Xv_train, Xv_test, vectorizer = get_embeddings(X_train, X_test,
+                                                          max_feature = max_feature , embedding_type= embedding)
+    
+    # train the model 
+    print('... Training {} model'.format(classifier.__class__.__name__))
+    clf = OneVsRestClassifier(classifier)
+    clf.fit(Xv_train, y_train)
+
+    # compute the test accuracy
+    print("... Computing accuracy")
+    prediction = clf.predict(Xv_test)
+
+    ## Accuracy score
+    score = (accuracy_score(y_test, prediction))
+    type2_score = j_score(y_test, prediction)
+    f1_s = f1_score(y_test, prediction,average='macro')
+    roc_auc = roc_auc_score(y_test, prediction)
+    confusion_matrix = multilabel_confusion_matrix(y_test, prediction)
+    score_sumry = [score, type2_score, f1_s, roc_auc]
+
+     #### Prediction on comment 
+
+    input_str = ["i'm going to kill you nigga, you are you sick or mad, i don't like you at all"]
+    input_str = clean(input_str[0])
+    input_str = process_txt(input_str, stemm= True)
+    input_str = vectorizer.transform([input_str])
+    
+
+    print('\n')
+    print("Model evaluation")
+    print("------")
+    print(print_score(prediction,y_test, classifier))
+    print('Accuracy is {}'.format(score))
+    print("ROC_AUC - {}".format(roc_auc))
+    print(print("check model accuracy on input_string {}".format(clf.predict(input_str))))
+    print("------")
+    print("Multilabel confusion matrix \n {}".format(confusion_matrix))
+    
+    return clf, vectorizer, score_sumry
+    
+
+
+# In[35]:
+
+
+final_clf, final_vectorizer , model_summary = train_model(n_bayes, corpus, df[labels], max_feature=2000, embedding= "bow")
+
+
+# In[36]:
+
+
+## Save model
+print("...Saving model in model directory")
+pkl_file = os.path.join(dir_path,'model', 'final_model.pkl')
+file = open(pkl_file,"wb")
+pickle.dump(final_clf,file)
+file.close()
+    
+
+
+# In[37]:
+
+
+## Save vectorizer
+print("...Saving vectorizer in model directory")
+pkl_file = os.path.join(dir_path,'model', 'final_vectorizer.pkl')
+file = open(pkl_file,"wb")
+pickle.dump(final_vectorizer,file)
+file.close()
+
+
+# ### Ignore below part
 
 # ### Stratified K Fold Cross Validation
 

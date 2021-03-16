@@ -5,26 +5,39 @@
 
 # This notebook guides through the steps to creating the processed dataset
 
-# In[1]:
+# In[3]:
+
+
+import os
+dir_path = os.path.dirname(os.getcwd())
+
+
+# In[4]:
 
 
 import numpy as np
 import pandas as pd
 import sys  
-sys.path.append('F:/AI/Toxic-comment-classifier/src')
+sys.path.append(os.path.join(dir_path, 'src'))
 from clean_comments import clean
 import processing
 from processing import process_txt
 
 
-# In[2]:
+# In[5]:
+
+
+train_path = os.path.join(dir_path, 'data', 'raw', 'train.csv')
+
+
+# In[7]:
 
 
 ## Read the raw data
-df = pd.read_csv('../data/raw/train.csv')
+df = pd.read_csv(train_path)
 
 
-# In[4]:
+# In[8]:
 
 
 ### Output of process_txt with stemming

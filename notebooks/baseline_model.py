@@ -10,7 +10,14 @@
 
 # For preparation lets import the required libraries and the data
 
-# In[ ]:
+# In[62]:
+
+
+import os
+dir_path = os.path.dirname(os.getcwd())
+
+
+# In[63]:
 
 
 import numpy as np
@@ -23,22 +30,28 @@ import string
 import operator
 import pickle
 import sys  
-sys.path.append('F:/AI/Toxic-comment-classifier/src')
+sys.path.append(os.path.join(dir_path, "src"))
 from clean_comments import clean
 
 
-# In[ ]:
+# In[64]:
+
+
+train_path = os.path.join(dir_path, 'data', 'raw', 'train.csv')
+
+
+# In[66]:
 
 
 ## Load dataset
-df = pd.read_csv('../data/raw/train.csv')
+df = pd.read_csv(train_path)
 
 
 # ### <br>2. Datasets for each category
 
 # Dataset with toxic comments
 
-# In[ ]:
+# In[67]:
 
 
 #extract dataset with toxic label
@@ -50,7 +63,7 @@ df_toxic.reset_index(level =['id'], inplace = True)
 
 # Dataset of severe toxic comments
 
-# In[ ]:
+# In[68]:
 
 
 #extract dataset with Severe toxic label
@@ -62,7 +75,7 @@ df_severe_toxic.reset_index(level =['id'], inplace = True)
 
 # Dataset with obscene comment 
 
-# In[ ]:
+# In[69]:
 
 
 #extract dataset with obscens label
@@ -75,7 +88,7 @@ df_obscene.reset_index(level =['id'], inplace = True)
 
 # Dataset with comments labeled as "identity_hate" 
 
-# In[ ]:
+# In[70]:
 
 
 df_identity_hate = df[df['identity_hate'] == 1]
@@ -86,7 +99,7 @@ df_identity_hate.reset_index(level =['id'], inplace = True)
 
 # Dataset with all the threat comments
 
-# In[ ]:
+# In[71]:
 
 
 df_threat = df[df['threat'] == 1]
@@ -97,7 +110,7 @@ df_threat.reset_index(level =['id'], inplace = True)
 
 # Dataset of comments with "Insult" label
 
-# In[ ]:
+# In[72]:
 
 
 df_insult = df[df['insult'] == 1]
@@ -108,7 +121,7 @@ df_insult.reset_index(level =['id'], inplace = True)
 
 # Dataset with comments which have all six labels
 
-# In[ ]:
+# In[73]:
 
 
 df_6 = df[(df['toxic']==1) & (df['severe_toxic']==1) &
@@ -116,7 +129,7 @@ df_6 = df[(df['toxic']==1) & (df['severe_toxic']==1) &
           (df['insult']==1)& (df['identity_hate']==1)]
 
 
-# In[ ]:
+# In[74]:
 
 
 df_6.set_index(['id'], inplace = True)
@@ -126,7 +139,7 @@ df_6.reset_index(level =['id'], inplace = True)
 
 # ### <br> 3. Preperation of vocab
 
-# In[1]:
+# In[75]:
 
 
 ### frequent_words function take dataset as an input and returns two arguments - 
@@ -166,7 +179,7 @@ def frequent_words(data):
     return all_word, counts
 
 
-# In[ ]:
+# In[76]:
 
 
 ## descend_order_dict funtion takes dataframe as an input and outputs sorted vocab dictionary
@@ -178,11 +191,11 @@ def descend_order_dict(data):
     return sorted_dict
 
 
-# In[ ]:
+# In[77]:
 
 
 label_sequence = df.columns.drop("id")
-label_sequence = sequence.drop("comment_text").tolist()
+label_sequence = label_sequence.drop("comment_text").tolist()
 label_sequence
 
 
@@ -355,7 +368,7 @@ word_intersection(df['comment_text'][55], 3)
 # rule_base_pred = df['comment_text'].apply(lambda x: word_intersection(x,3))
 
 
-# After running above cell, we get the prediction of the entire dataset each category in `rule_base_pred`, the orginal type of `rule_base_pred` is pandas.core.series.Series. This pandas series is converted into list and saved for future use. This `.pkl` fine can be loaded by running below cell.
+# After running above cell, we get the predictions on the entire dataset for each category in `rule_base_pred`, the orginal type of `rule_base_pred` is pandas.core.series.Series. This pandas series is converted into list and saved for future use. This `.pkl` fine can be loaded by running below cell.
 
 # In[ ]:
 
@@ -365,35 +378,39 @@ word_intersection(df['comment_text'][55], 3)
 
 # open_file = open(file_name, "wb")
 # pickle.dump(rule_base_pred, open_file)
+# # open_file.close()
+# open_file = open("rule_base_pred.pkl", "rb")
+# pred_rule = pickle.load(open_file)
 # open_file.close()
 
 
-# In[ ]:
+# In[78]:
 
 
 ### Open the saved rule_base_pred.pkl
-open_file = open("rule_base_pred.pkl", "rb")
+pkl_file = os.path.join(dir_path, 'model', 'rule_base_pred.pkl')
+open_file = open(pkl_file, "rb")
 pred_rule = pickle.load(open_file)
 open_file.close()
 
 
-# In[ ]:
+# In[79]:
 
 
 ## true prediction 
 y_true = df.drop(['id', 'comment_text'], axis=1)
 
 
-# In[ ]:
+# In[80]:
 
 
 ## check the type 
-type(y_true), type(rule_base_pred)
+type(y_true), type(pred_rule)
 
 
 # <br>Uncomment pred_rule line in below cell to convert the type of predictions from panda series to list,if not using saved `rule_base_pred.pkl`
 
-# In[ ]:
+# In[81]:
 
 
 ### Change the type to list
@@ -403,7 +420,7 @@ pred_true = y_true.values.tolist()
 
 # #### Compute accuracy of Baseline Model
 
-# In[ ]:
+# In[82]:
 
 
 ## Accuracy check for decent and not-decent comments classification
@@ -416,18 +433,22 @@ print("Overall accuracy of rule based classifier : {}".format((count/len(df))*10
 
 # Based on the rule implimented here, baseline classifier is classifying decent and not-decent comments with the **accuracy of 76.6%**.Now we have to see if AI based models giver better performance than this.
 
-# In[ ]:
+# In[83]:
 
 
 ## Category wise accuracy check
+mean = []
 for j in range(0, len(pred_true[0])):
     count = 0
     for i in range(0, len(df)):
         if pred_true[i][j] == pred_rule[i][j]:
             count = count+1
+    mean.append(count/len(df)*100)
     print("Accuracy of rule based classifier in predicting {} comments : {}".format(label_sequence[j],(count/len(df))*100))
+print("Mean accuracy : {}".format(np.array(mean).mean()))
 
 
+# Mean accuracy of our *rule-based-model* is 92.7%<br>
 # Minimum accuracy for predicting `toxic `, `severe_toxic `, `obscene `, `threat `, `insult `, or  `identity_hate ` class of the Baseline model is more that 88%.
 # <br>Accuracies for:
 # <ol>
@@ -442,3 +463,44 @@ for j in range(0, len(pred_true[0])):
 # <br>On the other hand, `obscene `, `insult `, and  `identity_hate ` have very good accuracy rates, seems like human labellers looked for these top 3 words to label comments under these categories.
 # <br>For `threat ` category, the model should perform well as the number of sample for this category is just 478, that means it has smaller vocab comparative to other classes. but seems like human labellers looked at more than these top 3 words of its vocab. It could be checked by tweaking the number of top n words.
 # 
+
+# In[84]:
+
+
+yp=np.array([np.array(xi) for xi in pred_rule])
+type(yp)
+# type(y[0])
+
+
+# In[85]:
+
+
+yp.shape
+
+
+# In[86]:
+
+
+yt=np.array([np.array(xi) for xi in pred_true])
+type(yt)
+
+
+# In[87]:
+
+
+yt.shape
+
+
+# In[88]:
+
+
+from sklearn.metrics import jaccard_score
+
+
+# In[89]:
+
+
+jaccard_score(yt,yp, average= 'weighted')
+
+
+# Our `rule based model` is really bad seeing jaccard similarity

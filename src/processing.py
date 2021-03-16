@@ -2,9 +2,9 @@ import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 import pandas as pd
-# import string
-# import operator
+import os
 from clean_comments import  clean
+
 
 ### Frequently used words in the obscene comments
 def process_txt(d, stemm = False,lemm = True):
@@ -33,20 +33,33 @@ def process_txt(d, stemm = False,lemm = True):
     
     return text
 
+
+
+
 if __name__ == "__main__":
+	dir_path = os.path.dirname(os.getcwd())
+	train_path = os.path.join(dir_path, 'data', 'raw', 'train.csv')
 
-    df = pd.read_csv('../data/raw/train.csv')
+	print("... [INFO]  Loading the train dataset")
 
-    ### processing each comment and appending it to the dataset
-    df['clean_comment'] = df['comment_text'].apply(lambda x:process_txt(x))
+	df = pd.read_csv(train_path)
 
-    ### dropping the original unclean comment coloum from dataset
-    df = df.drop('comment_text', axis = 1)
+	    ### processing each comment and appending it to the dataset
+	print("... [INFO]  Cleaning and processing each comment and appending it to the dataset ")
+	df['clean_comment'] = df['comment_text'].apply(lambda x:process_txt(x))
 
-    ### Renaming the clean comment colum to comment_text for ease
-    df = df.rename({'clean_comment': 'comment_text'}, axis=1)
+	    ### dropping the original unclean comment coloum from dataset
 
-    # print("dataset after dropping old comment {}".format(df.comment_text))
+	df = df.drop('comment_text', axis = 1)
 
-    ### Save processed data to 
-    df.to_csv(r'F:\AI\Toxic-comment-classifier\data\processed\processed_data.csv') 
+	    ### Renaming the clean comment colum to comment_text for ease
+	df = df.rename({'clean_comment': 'comment_text'}, axis=1)
+
+	# print("dataset after dropping old comment {}".format(df.comment_text))
+
+	 ### Save processed data to 
+	df.to_csv(os.path.join(dir_path, 'data', 'processed','processed_data.csv'))
+	print("... [INFO]  Processed data is saved in {} location ".format(os.path.join(dir_path, 'data', 'processed')))
+
+
+

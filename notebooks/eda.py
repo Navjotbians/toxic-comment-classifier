@@ -18,18 +18,28 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-# import re
-# import string
-# import nltk
+import os
 
 
 # In[2]:
 
 
-df = pd.read_csv('../data/raw/train.csv')
+dir_name = os.path.dirname(os.getcwd())
 
 
 # In[3]:
+
+
+train_path = os.path.join(dir_name,'data', 'raw', 'train.csv')
+
+
+# In[4]:
+
+
+df = pd.read_csv(train_path)
+
+
+# In[5]:
 
 
 print("Number of rows in data =",df.shape[0])
@@ -39,7 +49,7 @@ print("Sample data:")
 df.head()
 
 
-# In[13]:
+# In[6]:
 
 
 ## check for Null values
@@ -50,7 +60,7 @@ df.isnull().sum()
 
 # <br>In below cell, decent comments are those which are clean, doesn't include any level of toxicity and not-decent comments are those which has "toxic", "severe_toxic", "obscene", "threat","insult" and "identity_hate" comments
 
-# In[14]:
+# In[7]:
 
 
 non_toxic = len(df[(df['toxic']==0) & (df['severe_toxic']==0) & (df['obscene']==0) & (df['threat']== 0) & (df['insult']==0) & (df['identity_hate']==0)])
@@ -70,7 +80,7 @@ print('Percentage of not-decent comments: {} %'.format(toxic / len(df)*100))
 # Total comments are 159571, out of it only 16225 comments are not-decent. Furthermore, these not-decent comments are divided in six categories. These categories are : "toxic", "severe_toxic", "obscene", "threat","insult" and "identity_hate".
 # <br> <br> Lets calculate the number of comments belongs to each category
 
-# In[17]:
+# In[8]:
 
 
 ##df.iloc[:,2:].sum()
@@ -83,7 +93,7 @@ df_stats = pd.DataFrame(counts, columns=['category', 'number_of_comments'])
 df_stats
 
 
-# In[18]:
+# In[9]:
 
 
 levels = list(df_targets.columns.values)
@@ -99,6 +109,7 @@ for rect, label in zip(rects, labels):
     height = rect.get_height()
     ax.text(rect.get_x() + rect.get_width()/2, height + 5, label, ha='center', va='bottom')
 plt.show()
+plt.savefig("comment_count_each_category.png")
 
 
 # This bar graph shows the presence of skewness among these six categories, we have significantly more number of comments in toxic category as compared to "severe_toxic", "identity_hate" and "threat" category. This could lead model to have more cofidence in predicting toxic, obscene and insult class than predicting severe_toxic, threat and insult class
@@ -107,7 +118,7 @@ plt.show()
 
 # Note that here comments could have more than one labels assigned to them, so let's see count of comments that have multiple labels 
 
-# In[24]:
+# In[10]:
 
 
 rowSums = df_targets.iloc[:,:].sum(axis=1)
@@ -121,7 +132,7 @@ for rect, label in zip(rects, labels):
 plt.show()
 
 
-# In[23]:
+# In[11]:
 
 
 print("Percentage of comments with multi-labels : \n \n{} ".format((x/toxic)*100))
@@ -136,13 +147,13 @@ print("Percentage of comments with multi-labels : \n \n{} ".format((x/toxic)*100
 
 # #### Comparing toxic and severe_toxic categories
 
-# In[31]:
+# In[12]:
 
 
 print('Total number of comments labeled as toxic are: {}\n Total number of severe toxic comments are: {}'.format(df['toxic'].sum(), df['severe_toxic'].sum())) 
 
 
-# In[32]:
+# In[13]:
 
 
 # Dataframe that contains all the comments that are labeled as a severe toxic comments
@@ -150,14 +161,14 @@ df1 = df[df['severe_toxic']==1]
 df1.head()
 
 
-# In[33]:
+# In[14]:
 
 
 # Can be seen all the comments which are severe_toxic are labeled as toxic comments 
 (df1.severe_toxic == df1.toxic).sum()
 
 
-# In[34]:
+# In[15]:
 
 
 pd.crosstab(df.toxic,df.severe_toxic,margins=True).style.background_gradient(cmap='Set3')
@@ -167,7 +178,7 @@ pd.crosstab(df.toxic,df.severe_toxic,margins=True).style.background_gradient(cma
 
 # #### Comparing toxic with obscene category
 
-# In[35]:
+# In[16]:
 
 
 pd.crosstab(df.toxic,df.obscene,margins=True).style.background_gradient(cmap='Set3')
@@ -180,25 +191,25 @@ pd.crosstab(df.toxic,df.obscene,margins=True).style.background_gradient(cmap='Se
 # <br> what is the explanation for that?
 # 
 
-# In[37]:
+# In[17]:
 
 
 # pd.crosstab(df.obscene,df.toxic,margins=True).style.background_gradient(cmap='Set3')
 
 
-# In[38]:
+# In[18]:
 
 
 # df_obs = df[df['obscene']== 1]
 
 
-# In[39]:
+# In[19]:
 
 
 # df2 = df[(df['toxic']== 0) & (df['obscene']== 1)]
 
 
-# In[40]:
+# In[20]:
 
 
 # df.comment_text[2897]
@@ -210,7 +221,7 @@ pd.crosstab(df.toxic,df.obscene,margins=True).style.background_gradient(cmap='Se
 
 # #### Comparing obscene with severe_toxic category
 
-# In[43]:
+# In[21]:
 
 
 pd.crosstab(df.obscene,df.severe_toxic,margins=True).style.background_gradient(cmap='Set3')
@@ -218,7 +229,7 @@ pd.crosstab(df.obscene,df.severe_toxic,margins=True).style.background_gradient(c
 
 # #### Comparing toxic with threat category
 
-# In[21]:
+# In[22]:
 
 
 pd.crosstab(df.toxic,df.threat,margins=True).style.background_gradient(cmap='Set3')
@@ -230,7 +241,7 @@ pd.crosstab(df.toxic,df.threat,margins=True).style.background_gradient(cmap='Set
 
 # #### Comparing toxic with insult category
 
-# In[22]:
+# In[23]:
 
 
 pd.crosstab(df.toxic,df.insult,margins=True).style.background_gradient(cmap='Set3')
@@ -238,7 +249,7 @@ pd.crosstab(df.toxic,df.insult,margins=True).style.background_gradient(cmap='Set
 
 # #### Comparing toxic with identity_hate category
 
-# In[23]:
+# In[24]:
 
 
 pd.crosstab(df.toxic,df.identity_hate,margins=True).style.background_gradient(cmap='Set3')
