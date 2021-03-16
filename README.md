@@ -32,7 +32,7 @@ Start importing these necessary packages. If you have not installed these packag
 
 To run web application type the below command in the terminal.
 <br> `python app.py`
-<br> This server uses [http://127.0.0.1:12000/](http://127.0.0.1:12000/) address.
+<br> This server uses [http://127.0.0.1:13000/](http://127.0.0.1:13000/) address.
 
 ## Project structure
 Project has **5 main sub-directories:** 
