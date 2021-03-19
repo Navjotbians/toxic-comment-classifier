@@ -88,17 +88,16 @@ Project has **5 main sub-directories:**
 
 * <b>Data pre-processing and feature selection</b>
  <br>
- Steps taken to clean the comments
+ Steps taken to clean the comments:<br>
+
  * Non-characters, unrequired spaces, digits are removed with the help of `re` liberary.
  *  `Lemmatisation`, `stemming`, `tokenisation` and removal of `stopwords` done using `NLTK`
  *  `TF-IDF` and `Bag-of-Words` techniques are used to get the word embedding using `sklearn`<br>
 <br>A copy of `processed_data.csv` is already saved in `data/proccesed/` dir. In case you want to get the same results go ahead and run `processing.py` from `src/` dir to get the `processed_data.csv`  which will get saved in  `data/proccesed/` dir by dafault, so make sure you have this folder in  `Toxic-comment-classifier/` dir. In case you don't have `data/` folder then make sure to change the path for reading `train.csv` and writing the `processed_data.csv` before running the script.
 
-
-<details>
-  <summary><b>Rule Based Model</b></summary> 
-
-  The purpose of this model is to make predictions for all six categories on a comment using some set of rules. To do this, label-wise six datasets are created, then all the       words from the dataset are stored in their respective dictionaries with its occurance count in descending order. Finally predictions are made by checking the presence of top n   words from the dictionary, in the comments.
+* <b>Rule Based Model</b>
+  <br>
+  The purpose of this model is to make predictions for all six categories on a comment using some set of rules. To do this, label-wise six datasets are created, then all the words from the dataset are stored in their respective dictionaries with its occurance count in descending order. Finally predictions are made by checking the presence of top n words from the dictionary, in the comments.
   <br>
   <br>
   Minimum accuracy for predicting `toxic `, `severe_toxic `, `obscene `, `threat `, `insult `, or  `identity_hate ` class of the Baseline model is more that 88%.
@@ -112,29 +111,22 @@ Project has **5 main sub-directories:**
    * identity_hate: 98.3%<br>
   <br>Based on the rule implimented here, baseline classifier is classifying decent and not-decent comments with the **accuracy of 76.6%**.Now we have to see if AI based models gives better performance than this.
   <br><br>Run `baseline_model.ipynb` from `notebooks/` to see the details.
-</details>
 
-<details>
-  <summary><b>AI Models</b></summary> 
+* <b>AI Models</b>
+  <br>
  
- To tackle multilabel classification problem `OneVsRestClassifier` is used with different estimators such as `LogisticRegression`, `Naive Bayes`
-</details>
+  To tackle multilabel classification problem `OneVsRestClassifier` is used with different estimators such as `LogisticRegression`, `Naive Bayes`
 
-<details>
-  <summary><b>Model Evaluation</b></summary> 
+* <b>Model Evaluation</b>
+  <br>>
 
-For model evaluation *stratified K-fold* cross validation in conjuction with *F1-score* and *Jaccard score* is used.
+  For model evaluation *stratified K-fold* cross validation in conjuction with *F1-score* and *Jaccard score* is used.
 
-</details>
-
-<details>
-  <summary><b>Inference</b></summary> 
+* <b>Inference</b>
+  <br>
 
  Trained `Multinomial` varient of `Naive Bayes` model is used to make the prediction on incomming comments.
-</details>
 
-<details>
-  <summary><b>End product</b></summary> 
-
- Web-based application using `flask`
-</details>
+* <b>End product</b>
+  <br>
+  Web-based application using `flask`
