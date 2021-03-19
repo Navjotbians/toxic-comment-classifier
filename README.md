@@ -1,6 +1,7 @@
 <img src= "images/logo4.jpg" width = 200 height = 40 align = "right">
 
 # Toxic Comment Classifier
+![Comment classifier](images/video_gif)
 
 It is been evident that human psychology is changing; our emotions are getting attached with the likes, comments and tags we receive on the social media. We receive both good and bad comment but the impact of toxic comments is affecting the engagement of the users in the meaningful conversations.
 Moreover, users can see others using hateful words, slurs and ideas, and those things are becoming normal but the severity and viciousness of these comments has evolved into something much more sinister such as recent capitol riots at US parliament and attack on farmers by local goons in India.
@@ -47,9 +48,8 @@ Project has **5 main sub-directories:**
  [Dataset](https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data) used in this project is the Jigsaw/Conversation AI dataset provided for the Kaggle Toxic Comment Classification Challenge. This dataset contains 159571 Wikipedia comments which have been labeled by human raters for type of toxicity.
 
 
-## Project Pipeline	
-<details>
-  <summary><b>Dataset</b></summary> 
+## Project Pipeline	 
+* <b>Dataset</b><br>
   Below is the preview of the dataset;
 
   ![](images/data_head.JPG)
@@ -61,10 +61,9 @@ Project has **5 main sub-directories:**
   * `threat`
   * `insult`
   * `identity_hate`
-</details>
 
-<details>
-  <summary><b>Exploratory data analysis</b></summary> 
+
+* <b>Exploratory data analysis</b> 
   <br>
   Dataset is highly imbalanced
   <ul>
@@ -73,33 +72,31 @@ Project has **5 main sub-directories:**
   <li>not-decent comments(positive class): 16225</li> 
   <li>ratio of negative class with positive class: 89.8:10.2</li>
   </ul> 
- These 16225 not-decent comments are multilabeled under different types of toxic labels
+  These 16225 not-decent comments are multilabeled under different types of toxic labels
  
   <!-- UL -->
   ![](images/count_category_wise.png)
   <!-- UL -->
 
- Note that here comments could have more than one label assigned to them, so this graph shown below shows the count of comments and number of labels attached to them
+  Note that here comments could have more than one label assigned to them, so this graph shown below shows the count of comments and number of labels attached to them
   <!-- UL -->
   ![](images/comments_have_multilabels.png)
   <!-- UL -->
 
-With this much skewness in dataset, the model will give default accuracy of 90% in classifying a comment as a decent comment without learning anything. To overcome this problem we could use stratified K-fold cross validation technique to make sure this skewness doesn't lead model to produce biased results. For the same reason, we are not using accuracy as a measure of a model performance, so we will explore alternative matrics that provide better guidance in evaluating and selecting model such as F1 score, Jaccard score, AUC. Further, pairwise label comparison is done to check if there is any kind of overlap between the features of the two labels, for example, it was noted that all `severe_toxic` comments are also labeled as`toxic`. For details run  `eda.ipynb` from `notebooks/` to check the detailed exploration of the data
-</details>
+  With this much skewness in dataset, the model will give default accuracy of 90% in classifying a comment as a decent comment without learning anything. To overcome this problem we could use stratified K-fold cross validation technique to make sure this skewness doesn't lead model to produce biased results. For the same reason, we are not using accuracy as a measure of a model performance, so we will explore alternative matrics that provide better guidance in evaluating and selecting model such as F1 score, Jaccard score, AUC. Further, pairwise label comparison is done to check if there is any kind of overlap between the features of the two labels, for example, it was noted that all `severe_toxic` comments are also labeled as`toxic`. For details run  `eda.ipynb` from `notebooks/` to check the detailed exploration of the data
 
-<details>
-  <summary><b>Data pre-processing and feature selection</b></summary> 
+
+* <b>Data pre-processing and feature selection</b>
+  <br>
  
- Steps taken to clean the comments
- * Non-characters, unrequired spaces, digits are removed with the help of `re` liberary.
- *  `Lemmatisation`, `stemming`, `tokenisation` and removal of `stopwords` done using `NLTK`
- *  `TF-IDF` and `Bag-of-Words` techniques are used to get the word embedding using `sklearn`<br>
+  Steps taken to clean the comments
+  * Non-characters, unrequired spaces, digits are removed with the help of `re` liberary.
+  *  `Lemmatisation`, `stemming`, `tokenisation` and removal of `stopwords` done using `NLTK`
+  *  `TF-IDF` and `Bag-of-Words` techniques are used to get the word embedding using `sklearn`<br>
 <br>A copy of `processed_data.csv` is already saved in `data/proccesed/` dir. In case you want to get the same results go ahead and run `processing.py` from `src/` dir to get the `processed_data.csv`  which will get saved in  `data/proccesed/` dir by dafault, so make sure you have this folder in  `Toxic-comment-classifier/` dir. In case you don't have `data/` folder then make sure to change the path for reading `train.csv` and writing the `processed_data.csv` before running the script.
-</details>
 
-<details>
-  <summary><b>Rule Based Model</b></summary> 
-
+* <b>Rule Based Model</b>
+  <br>
   The purpose of this model is to make predictions for all six categories on a comment using some set of rules. To do this, label-wise six datasets are created, then all the       words from the dataset are stored in their respective dictionaries with its occurance count in descending order. Finally predictions are made by checking the presence of top n   words from the dictionary, in the comments.
   <br>
   <br>
@@ -114,29 +111,22 @@ With this much skewness in dataset, the model will give default accuracy of 90% 
    * identity_hate: 98.3%<br>
   <br>Based on the rule implimented here, baseline classifier is classifying decent and not-decent comments with the **accuracy of 76.6%**.Now we have to see if AI based models gives better performance than this.
   <br><br>Run `baseline_model.ipynb` from `notebooks/` to see the details.
-</details>
 
-<details>
-  <summary><b>AI Models</b></summary> 
+
+* <b>AI Models</b>
+  <br>
  
- To tackle multilabel classification problem `OneVsRestClassifier` is used with different estimators such as `LogisticRegression`, `Naive Bayes`
-</details>
+  To tackle multilabel classification problem `OneVsRestClassifier` is used with different estimators such as `LogisticRegression`, `Naive Bayes`
 
-<details>
-  <summary><b>Model Evaluation</b></summary> 
+* <b>Model Evaluation</b>
+  <br>
+  For model evaluation *stratified K-fold* cross validation in conjuction with *F1-score* and *Jaccard score* is used.
 
-For model evaluation *stratified K-fold* cross validation in conjuction with *F1-score* and *Jaccard score* is used.
+* <b>Inference</b>
+  <br>
+  Trained `Multinomial` varient of `Naive Bayes` model is used to make the prediction on incomming comments.
 
-</details>
+* <b>End product</b>
+  <br>
+  Web-based application using `flask`
 
-<details>
-  <summary><b>Inference</b></summary> 
-
- Trained `Multinomial` varient of `Naive Bayes` model is used to make the prediction on incomming comments.
-</details>
-
-<details>
-  <summary><b>End product</b></summary> 
-
- Web-based application using `flask`
-</details>
