@@ -37,17 +37,14 @@ def check_toxicity():
 
 	labels = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
 	predc = []
-	for i,j in zip(prediction[0], labels):
-		if i == 1:
-			predc.append(j)
-	if len(predc)== 0:
-		i ='Comment is not toxic'
-		return render_template('form1.html', p = i)
+	i = [labels[i] for i in range (0,len(prediction[0])) if prediction[0][i] == 1]
+	if len(i)== 0:
+		out ='Comment is not toxic'
+		return render_template('form1.html', p = out)
 	else:
-		i = str(predc)
-		return render_template('form1.html', p = i)
-
-	return i
+		out = " | ".join(i)
+		return render_template('form1.html', p = out)
+	return render_template('form1.html', p = "")
 
 	
 

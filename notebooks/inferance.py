@@ -3,20 +3,14 @@
 
 # # Inference
 
-# In[43]:
-
-
-os.getcwd()
-
-
-# In[42]:
+# In[5]:
 
 
 import os
 dir_path = os.path.dirname(os.getcwd())
 
 
-# In[2]:
+# In[6]:
 
 
 import pandas as pd
@@ -35,7 +29,7 @@ from clean_comments import clean
 from processing import process_txt
 
 
-# In[3]:
+# In[7]:
 
 
 ### load model
@@ -45,7 +39,7 @@ model = pickle.load(open_file)
 open_file.close()
 
 
-# In[4]:
+# In[8]:
 
 
 ### load vectorizer
@@ -55,7 +49,7 @@ bw_vectorizer = pickle.load(open_file)
 open_file.close()
 
 
-# In[38]:
+# In[9]:
 
 
 i1 = ["that is so good, i am so happy bitch!"]
@@ -63,22 +57,22 @@ i2 = ['This project is quite interesting to work on']
 i3 = ["i'm going to kill you nigga, you are you sick or mad, i don't like you at all"]
 
 
-# In[39]:
+# In[44]:
 
 
-input_str = clean(i2[0])
+input_str = clean(i1[0])
 input_str = process_txt(input_str, stemm= True)
 input_str = bw_vectorizer.transform([input_str])
 
 
-# In[40]:
+# In[45]:
 
 
 prediction = model.predict(input_str)
 prediction
 
 
-# In[41]:
+# In[46]:
 
 
 labels = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
@@ -96,8 +90,14 @@ else:
     print(i)
 
 
-# In[ ]:
+# In[47]:
 
 
-1
+yo = [labels[i] for i in range (0,len(prediction[0])) if prediction[0][i] == 1]
+
+
+# In[48]:
+
+
+yo
 

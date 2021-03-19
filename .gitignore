@@ -1,5 +1,7 @@
 .ipynb_checkpoints
 *.csv
 *.html
+!form1.html
 Colab
+.env
 
