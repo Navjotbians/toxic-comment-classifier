@@ -110,7 +110,6 @@ Project has **5 main sub-directories:**
    * insult: 95.8%
    * identity_hate: 98.3%<br>
 <br>Based on the rule implimented here, baseline classifier is classifying decent and not-decent comments with the **accuracy of 76.6%**.Now we have to see if AI based models gives better performance than this.
-<br>
 <br>Run `baseline_model.ipynb` from `notebooks/` to see the details.
 
 * <b>AI Models</b>
