@@ -1,7 +1,8 @@
 <img src= "images/logo4.jpg" width = 200 height = 40 align = "right">
 
 # Toxic Comment Classifier
-![Comment classifier](images/video_gif)
+<br>
+![](images/app.gif)
 
 It is been evident that human psychology is changing; our emotions are getting attached with the likes, comments and tags we receive on the social media. We receive both good and bad comment but the impact of toxic comments is affecting the engagement of the users in the meaningful conversations.
 Moreover, users can see others using hateful words, slurs and ideas, and those things are becoming normal but the severity and viciousness of these comments has evolved into something much more sinister such as recent capitol riots at US parliament and attack on farmers by local goons in India.
