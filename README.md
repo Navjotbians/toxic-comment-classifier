@@ -92,7 +92,7 @@ Project has **5 main sub-directories:**
   * Non-characters, unrequired spaces, digits are removed with the help of `re` liberary.
   *  `Lemmatisation`, `stemming`, `tokenisation` and removal of `stopwords` done using `NLTK`
   *  `TF-IDF` and `Bag-of-Words` techniques are used to get the word embedding using `sklearn`<br>
-  <br>A copy of `processed_data.csv` is already saved in `data/proccesed/` dir. In case you want to get the same results go ahead and run `processing.py` from `src/` dir to get the `processed_data.csv`  which will get saved in  `data/proccesed/` dir by dafault, so make sure you have this folder in  `Toxic-comment-classifier/` dir. In case you don't have `data/` folder then make sure to change the path for reading `train.csv` and writing the `processed_data.csv` before running the script.
+<br>A copy of `processed_data.csv` is already saved in `data/proccesed/` dir. In case you want to get the same results go ahead and run `processing.py` from `src/` dir to get the `processed_data.csv`  which will get saved in  `data/proccesed/` dir by dafault, so make sure you have this folder in  `Toxic-comment-classifier/` dir. In case you don't have `data/` folder then make sure to change the path for reading `train.csv` and writing the `processed_data.csv` before running the script.
 
 
 <details>
