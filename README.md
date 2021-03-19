@@ -87,12 +87,12 @@ Project has **5 main sub-directories:**
   With this much skewness in dataset, the model will give default accuracy of 90% in classifying a comment as a decent comment without learning anything. To overcome this problem we could use stratified K-fold cross validation technique to make sure this skewness doesn't lead model to produce biased results. For the same reason, we are not using accuracy as a measure of a model performance, so we will explore alternative matrics that provide better guidance in evaluating and selecting model such as F1 score, Jaccard score, AUC. Further, pairwise label comparison is done to check if there is any kind of overlap between the features of the two labels, for example, it was noted that all `severe_toxic` comments are also labeled as`toxic`. For details run  `eda.ipynb` from `notebooks/` to check the detailed exploration of the data
 
 * <b>Data pre-processing and feature selection</b>
- <br>
- Steps taken to clean the comments:<br>
+  <br>
+  Steps taken to clean the comments:<br>
 
- * Non-characters, unrequired spaces, digits are removed with the help of `re` liberary.
- *  `Lemmatisation`, `stemming`, `tokenisation` and removal of `stopwords` done using `NLTK`
- *  `TF-IDF` and `Bag-of-Words` techniques are used to get the word embedding using `sklearn`<br>
+  *  Non-characters, unrequired spaces, digits are removed with the help of `re` liberary.
+  *  `Lemmatisation`, `stemming`, `tokenisation` and removal of `stopwords` done using `NLTK`
+  *  `TF-IDF` and `Bag-of-Words` techniques are used to get the word embedding using `sklearn`<br>
 <br>A copy of `processed_data.csv` is already saved in `data/proccesed/` dir. In case you want to get the same results go ahead and run `processing.py` from `src/` dir to get the `processed_data.csv`  which will get saved in  `data/proccesed/` dir by dafault, so make sure you have this folder in  `Toxic-comment-classifier/` dir. In case you don't have `data/` folder then make sure to change the path for reading `train.csv` and writing the `processed_data.csv` before running the script.
 
 * <b>Rule Based Model</b>
@@ -109,23 +109,21 @@ Project has **5 main sub-directories:**
    * threat: 87.8%
    * insult: 95.8%
    * identity_hate: 98.3%<br>
-  <br>Based on the rule implimented here, baseline classifier is classifying decent and not-decent comments with the **accuracy of 76.6%**.Now we have to see if AI based models gives better performance than this.
-  <br><br>Run `baseline_model.ipynb` from `notebooks/` to see the details.
+<br>Based on the rule implimented here, baseline classifier is classifying decent and not-decent comments with the **accuracy of 76.6%**.Now we have to see if AI based models gives better performance than this.
+<br>
+<br>Run `baseline_model.ipynb` from `notebooks/` to see the details.
 
 * <b>AI Models</b>
   <br>
- 
   To tackle multilabel classification problem `OneVsRestClassifier` is used with different estimators such as `LogisticRegression`, `Naive Bayes`
 
 * <b>Model Evaluation</b>
-  <br>>
-
+  <br>
   For model evaluation *stratified K-fold* cross validation in conjuction with *F1-score* and *Jaccard score* is used.
 
 * <b>Inference</b>
   <br>
-
- Trained `Multinomial` varient of `Naive Bayes` model is used to make the prediction on incomming comments.
+  Trained `Multinomial` varient of `Naive Bayes` model is used to make the prediction on incomming comments.
 
 * <b>End product</b>
   <br>
