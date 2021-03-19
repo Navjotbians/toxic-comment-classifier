@@ -48,8 +48,7 @@ Project has **5 main sub-directories:**
 
 
 ## Project Pipeline	
-<details>
-  <summary><b>Dataset</b></summary> 
+* <b>Dataset</b><br>
   Below is the preview of the dataset;
 
   ![](images/data_head.JPG)
@@ -61,7 +60,7 @@ Project has **5 main sub-directories:**
   * `threat`
   * `insult`
   * `identity_hate`
-</details>
+
 
 <details>
   <summary><b>Exploratory data analysis</b></summary> 
