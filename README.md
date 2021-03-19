@@ -71,18 +71,18 @@ Project has **5 main sub-directories:**
   <li>not-decent comments(positive class): 16225</li> 
   <li>ratio of negative class with positive class: 89.8:10.2</li>
   </ul> 
- These 16225 not-decent comments are multilabeled under different types of toxic labels
+  These 16225 not-decent comments are multilabeled under different types of toxic labels
  
   <!-- UL -->
   ![](images/count_category_wise.png)
   <!-- UL -->
 
- Note that here comments could have more than one label assigned to them, so this graph shown below shows the count of comments and number of labels attached to them
+  Note that here comments could have more than one label assigned to them, so this graph shown below shows the count of comments and number of labels attached to them
   <!-- UL -->
   ![](images/comments_have_multilabels.png)
   <!-- UL -->
 
-With this much skewness in dataset, the model will give default accuracy of 90% in classifying a comment as a decent comment without learning anything. To overcome this problem we could use stratified K-fold cross validation technique to make sure this skewness doesn't lead model to produce biased results. For the same reason, we are not using accuracy as a measure of a model performance, so we will explore alternative matrics that provide better guidance in evaluating and selecting model such as F1 score, Jaccard score, AUC. Further, pairwise label comparison is done to check if there is any kind of overlap between the features of the two labels, for example, it was noted that all `severe_toxic` comments are also labeled as`toxic`. For details run  `eda.ipynb` from `notebooks/` to check the detailed exploration of the data
+  With this much skewness in dataset, the model will give default accuracy of 90% in classifying a comment as a decent comment without learning anything. To overcome this problem we could use stratified K-fold cross validation technique to make sure this skewness doesn't lead model to produce biased results. For the same reason, we are not using accuracy as a measure of a model performance, so we will explore alternative matrics that provide better guidance in evaluating and selecting model such as F1 score, Jaccard score, AUC. Further, pairwise label comparison is done to check if there is any kind of overlap between the features of the two labels, for example, it was noted that all `severe_toxic` comments are also labeled as`toxic`. For details run  `eda.ipynb` from `notebooks/` to check the detailed exploration of the data
 
 
 <details>
