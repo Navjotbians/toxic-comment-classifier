@@ -3,33 +3,24 @@
 
 # # Inference
 
-# In[5]:
+# In[10]:
 
 
-import os
-dir_path = os.path.dirname(os.getcwd())
-
-
-# In[6]:
-
-
-import pandas as pd
-import numpy as np
-from sklearn.multiclass import OneVsRestClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn import feature_extraction,model_selection,preprocessing, naive_bayes,pipeline, manifold
-from sklearn.model_selection import cross_val_score
-from sklearn.metrics import accuracy_score, classification_report, f1_score
 import pickle
 import os
 import sys  
 sys.path.append(os.path.join(dir_path, "src"))
-from word_embeddings import get_embeddings
 from clean_comments import clean
 from processing import process_txt
 
 
-# In[7]:
+# In[11]:
+
+
+dir_path = os.path.dirname(os.getcwd())
+
+
+# In[4]:
 
 
 ### load model
@@ -39,7 +30,7 @@ model = pickle.load(open_file)
 open_file.close()
 
 
-# In[8]:
+# In[5]:
 
 
 ### load vectorizer
@@ -49,15 +40,16 @@ bw_vectorizer = pickle.load(open_file)
 open_file.close()
 
 
-# In[9]:
+# In[6]:
 
 
 i1 = ["that is so good, i am so happy bitch!"]
 i2 = ['This project is quite interesting to work on']
 i3 = ["i'm going to kill you nigga, you are you sick or mad, i don't like you at all"]
+i4 = ["D'aww! He matches this background colour I'm seemingly stuck with. Thanks.  (talk) 21:51, January 11, 2016 (UTC)"]
 
 
-# In[44]:
+# In[7]:
 
 
 input_str = clean(i1[0])
@@ -65,39 +57,23 @@ input_str = process_txt(input_str, stemm= True)
 input_str = bw_vectorizer.transform([input_str])
 
 
-# In[45]:
+# In[8]:
 
 
 prediction = model.predict(input_str)
 prediction
 
 
-# In[46]:
+# In[9]:
 
 
 labels = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
-predc = []
-for i,j in zip(prediction[0], labels):
-    if i == 1:
-        predc.append(j)
-print(predc)
+
+predc = [labels[i] for i in range (0,len(prediction[0])) if prediction[0][i] == 1]
 
 if len(predc)== 0:
     i ='comment in not toxic'
     print(i)
 else:
-    i = str(predc)
-    print(i)
-
-
-# In[47]:
-
-
-yo = [labels[i] for i in range (0,len(prediction[0])) if prediction[0][i] == 1]
-
-
-# In[48]:
-
-
-yo
+    print("Prediction : {}".format(" | ".join(predc)))
 
