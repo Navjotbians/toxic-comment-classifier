@@ -94,10 +94,8 @@ Project has **5 main sub-directories:**
   *  `TF-IDF` and `Bag-of-Words` techniques are used to get the word embedding using `sklearn`<br>
 <br>A copy of `processed_data.csv` is already saved in `data/proccesed/` dir. In case you want to get the same results go ahead and run `processing.py` from `src/` dir to get the `processed_data.csv`  which will get saved in  `data/proccesed/` dir by dafault, so make sure you have this folder in  `Toxic-comment-classifier/` dir. In case you don't have `data/` folder then make sure to change the path for reading `train.csv` and writing the `processed_data.csv` before running the script.
 
-
-<details>
-  <summary><b>Rule Based Model</b></summary> 
-
+* <b>Rule Based Model</b>
+  <br>
   The purpose of this model is to make predictions for all six categories on a comment using some set of rules. To do this, label-wise six datasets are created, then all the       words from the dataset are stored in their respective dictionaries with its occurance count in descending order. Finally predictions are made by checking the presence of top n   words from the dictionary, in the comments.
   <br>
   <br>
@@ -112,7 +110,7 @@ Project has **5 main sub-directories:**
    * identity_hate: 98.3%<br>
   <br>Based on the rule implimented here, baseline classifier is classifying decent and not-decent comments with the **accuracy of 76.6%**.Now we have to see if AI based models gives better performance than this.
   <br><br>Run `baseline_model.ipynb` from `notebooks/` to see the details.
-</details>
+
 
 <details>
   <summary><b>AI Models</b></summary> 
