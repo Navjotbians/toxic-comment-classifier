@@ -112,27 +112,20 @@ Project has **5 main sub-directories:**
   <br><br>Run `baseline_model.ipynb` from `notebooks/` to see the details.
 
 
-<details>
-  <summary><b>AI Models</b></summary> 
+* <b>AI Models</b>
+  <br>
  
- To tackle multilabel classification problem `OneVsRestClassifier` is used with different estimators such as `LogisticRegression`, `Naive Bayes`
-</details>
+  To tackle multilabel classification problem `OneVsRestClassifier` is used with different estimators such as `LogisticRegression`, `Naive Bayes`
 
-<details>
-  <summary><b>Model Evaluation</b></summary> 
+* <b>Model Evaluation</b>
+  <br>
+  For model evaluation *stratified K-fold* cross validation in conjuction with *F1-score* and *Jaccard score* is used.
 
-For model evaluation *stratified K-fold* cross validation in conjuction with *F1-score* and *Jaccard score* is used.
+* <b>Inference</b>
+  <br>
+  Trained `Multinomial` varient of `Naive Bayes` model is used to make the prediction on incomming comments.
 
-</details>
+* <b>End product</b>
+  <br>
+  Web-based application using `flask`
 
-<details>
-  <summary><b>Inference</b></summary> 
-
- Trained `Multinomial` varient of `Naive Bayes` model is used to make the prediction on incomming comments.
-</details>
-
-<details>
-  <summary><b>End product</b></summary> 
-
- Web-based application using `flask`
-</details>
