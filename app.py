@@ -18,13 +18,13 @@ vectorizer = pickle.load(open(vec_file, 'rb'))
 @app.route('/')
 
 def home():
-	return render_template('form1.html', p = "")
+	return render_template('form.html', p = "")
 
 
 @app.route('/', methods = ['POST'])
 def check_toxicity():
 	if len(request.form['u']) == 0:
-		return render_template('form1.html', p = "")
+		return render_template('form.html', p = "")
 	else:
 		text = request.form['u']
 		processed_text = text.lower()
@@ -37,12 +37,10 @@ def check_toxicity():
 		i = [labels[i] for i in range (0,len(prediction[0])) if prediction[0][i] == 1]
 		if len(i)== 0:
 			out ='Comment is not toxic'
-			return render_template('form1.html', p = out)
+			return render_template('form.html', p = out)
 		else:
 			out = " | ".join(i)
-			return render_template('form1.html', p = out)
-	
-
+			return render_template('form.html', p = out)
 	
 
 if __name__ == '__main__':

@@ -3,24 +3,19 @@
 
 # # Inference
 
-# In[10]:
+# In[1]:
 
 
 import pickle
 import os
+dir_path = os.path.dirname(os.getcwd())
 import sys  
 sys.path.append(os.path.join(dir_path, "src"))
 from clean_comments import clean
 from processing import process_txt
 
 
-# In[11]:
-
-
-dir_path = os.path.dirname(os.getcwd())
-
-
-# In[4]:
+# In[2]:
 
 
 ### load model
@@ -30,7 +25,7 @@ model = pickle.load(open_file)
 open_file.close()
 
 
-# In[5]:
+# In[3]:
 
 
 ### load vectorizer
@@ -40,7 +35,7 @@ bw_vectorizer = pickle.load(open_file)
 open_file.close()
 
 
-# In[6]:
+# In[4]:
 
 
 i1 = ["that is so good, i am so happy bitch!"]
@@ -49,7 +44,7 @@ i3 = ["i'm going to kill you nigga, you are you sick or mad, i don't like you at
 i4 = ["D'aww! He matches this background colour I'm seemingly stuck with. Thanks.  (talk) 21:51, January 11, 2016 (UTC)"]
 
 
-# In[7]:
+# In[5]:
 
 
 input_str = clean(i1[0])
@@ -57,14 +52,14 @@ input_str = process_txt(input_str, stemm= True)
 input_str = bw_vectorizer.transform([input_str])
 
 
-# In[8]:
+# In[6]:
 
 
 prediction = model.predict(input_str)
 prediction
 
 
-# In[9]:
+# In[7]:
 
 
 labels = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
@@ -76,4 +71,28 @@ if len(predc)== 0:
     print(i)
 else:
     print("Prediction : {}".format(" | ".join(predc)))
+
+
+# In[1]:
+
+
+from sklearn import preprocessing
+
+
+# In[2]:
+
+
+import sklearn
+
+
+# In[5]:
+
+
+print(sklearn.__version__)
+
+
+# In[2]:
+
+
+preprocessing._label
 

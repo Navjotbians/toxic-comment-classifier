@@ -1,122 +1,78 @@
 
 # coding: utf-8
 
-# ### Model training
+# # Model training
 
-# #### Import all the required packages
+# ## Import all the required packages
 
-# In[21]:
+# In[8]:
 
 
 import os
 dir_path = os.path.dirname(os.getcwd())
 
 
-# In[22]:
+# In[21]:
 
 
-import pandas as pd
-import numpy as np
-from sklearn.multiclass import OneVsRestClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.svm import LinearSVC
-from sklearn import feature_extraction,model_selection,preprocessing, naive_bayes,pipeline, manifold
-from sklearn.model_selection import cross_val_score
-from sklearn.metrics import accuracy_score, classification_report, f1_score, roc_auc_score
-from sklearn.metrics import multilabel_confusion_matrix
 from sklearn.model_selection import StratifiedKFold
-from sklearn.model_selection import GridSearchCV
-import pickle
+import pandas as pd
 import sys  
 sys.path.append(os.path.join(dir_path, "src"))
 from word_embeddings import get_embeddings
 from clean_comments import clean
 from processing import process_txt
+from train import train_model
+from sklearn import feature_extraction, preprocessing, naive_bayes
+import pickle
 
 
-# #### load processed dataset
+# ## Load Processed Dataset
 
-# In[24]:
+# In[10]:
 
 
 processed_data = os.path.join(dir_path, 'data', 'processed', 'processed_stem_data.csv')
 
 
-# In[25]:
+# In[11]:
 
 
 df = pd.read_csv(processed_data)
 
 
-# In[26]:
+# In[12]:
 
 
 df.head()
 
 
-# In[27]:
+# In[13]:
 
 
 ### fill NA for any missing data 
 df['comment_text'].fillna("missing", inplace=True)
 
 
-# In[28]:
+# In[14]:
 
 
 labels = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
 corpus = df['comment_text']
 
 
-# ### Distribution of classes we are getting after train test split
+# ## Convert Text Comments into Vectors using Bag-of-Words or TF-IDF 
 
-# In[8]:
-
-
-X_train, X_test, y_train, y_test = model_selection.train_test_split(corpus,df[labels],
-                                                                    test_size=0.25,random_state=42)
-
-
-# In[9]:
-
-
-X_train.shape, X_test.shape
-
-
-# In[10]:
-
-
-# Stats of X_train labels
-counts = []
-for i in labels:
-    counts.append((i, y_train[i].sum()))
-df_stats = pd.DataFrame(counts, columns=['Labels', 'number_of_comments'])
-df_stats
-
-
-# In[11]:
-
-
-#stats of X_test labels
-counts = []
-for i in labels:
-    counts.append((i, y_test[i].sum()))
-df_stats = pd.DataFrame(counts, columns=['Labels', 'number_of_comments'])
-df_stats
-
-
-# ### Converting text comments into vectors using bag of words or TF-IDF 
-
-# We know that machine learning models doesn't accept input in the text format. So we need to convert the text data into Vector form, it is also called **Word Embeddings**. Word Embeddings can be broadly classified as:
+# We know that machine learning models doesn't accept input in the text format. So we need to convert the text data into vector form, it is also called **Word Embeddings**. Word Embeddings can be broadly classified as:
 # 1. Frequency based - Most popular techniques are **Bag-of-Words**, **TF-IDF**
-# 2. Pridiction based - Most popular techniques are **Word2vec** and **Glove**
+# 2. Prediction based - Most popular techniques are **Word2vec** and **Glove**
 # 
 # 
 
 # Here we will be using **Bag-of-Words** and **TF-IDF**<br>
-# <br>**Bag-of-Words(BOW)** - To get the embeddings from BOW we will firstly make a dictionary of words is from the test data along with the count of each word occurance in the data, then these words from the dictionary are sorted in descending order of their occurance,put these words into the columns and used as an independent features and here rows are the sentences or samples. These features will have values 0 or 1 based on if the word exists in the sentence.
+# <br>**Bag-of-Words(BOW)** - To get the embeddings with BOW technique, firstly we will have to make a dictionary with keys as a words from the test data and count of each word occurance as a value, then sort the dictionary in descending order of its values.Then these words from the dictionary are the names of our independed features and we can also choose how many features we want to use by selecting the top n words from the dictionary. Now these features will have values 0 or 1 based on if the word exists in the sentence.
 # <br>
-# **Disadvantage** of BOW - Word Embedding we get from BOW have either 0's and 1's as a values, no weights are given to the words according to their importance in the sentence. That means we can not get the sementics of the sentence.
+# **Disadvantage** of BOW - Word Embeddings have either 0's and 1's as a values, no weights are given to the words according to their importance in the sentence. That means we can not get the sementics of the sentence.
 
 # **TF-IDF** - It stands for Term Frequency - Inverse Document Frequency
 # <br> To get embedding with TF-IDF, we calculate Term frequency and Inverse Document Frequency seperate and then multiply them together to get TF-IDF.
@@ -126,12 +82,12 @@ df_stats
 # **IDF :**$$log\Bigg[\frac{Total\, Number\, of\,sentences}{Number\, of\, sentences\, containing\, the \, word}\Bigg]$$ 
 # <br>
 # **TF-IDF :** $TF * IDF$ $$\Bigg[\frac{Number\, of\, repetition\, of\, word\, in\, a\, sentence}{Number\, of\, words\, in\, a\, sentence}\Bigg]*log\Bigg[\frac{Total\, Number\, of\,sentences}{Number\, of\, sentences\, containing\, the \, word}\Bigg]$$ 
-# <br>In **TF-IDF** also, we need dictionary of words with their count of occurance to do the calculation. **TF** assign more weightage to the word which repeat multiple times in the sentance where as **IDF** decreases the weightage to word as number of sentences containing the increases. Here, feature vectors not only contains 0's and 1' but does contain other other values depending on the word importance in the sentence. This is retaining the sementics of the sentence to some extent so it should perform better than BOW.
-# <br>Here **TF-IDG** can have zero value for the word which existed in every sentence and give more weightage to less often occured words that means it could cause over-fitting problem but that is yet to discove. 
+# <br>In **TF-IDF** also, we create dictionary of words with their count of occurance. **TF** assign more weightage to the word which repeat multiple times in the sentance where as **IDF** decreases the weightage to word as number of sentences containing the increases. Here, feature vectors not only contains 0's and 1' but does contain other values depending on the significance of the word in the sentence. This technique retains the sementics of the sentence to some extent so it should perform better than BOW.
+# <br>Here **TF-IDG** can have zero value for the word which existed in every sentence and give more weightage to least occured words that means it could cause over-fitting problem but that is yet to discove. 
 
 # We will try Bag-of-Words and TF-IDFto get our features for `X_train`  and `X_test` data. The resultant embeddings are in numpy array format, if we have a look at the the embeddings we will know it is high dimensional sparse data.
 
-# ### Matrix used to evaluate the models
+# ## Matrix used to evaluate the models
 
 # Multi-label classification problems must be assessed using different performance measures than single-label classification problems.
 
@@ -139,111 +95,105 @@ df_stats
 
 # We will also look at *F1-score* and *ROC score*
 
-# In[29]:
+# In[4]:
 
 
-def j_score(y_true, y_pred):
-    jaccard = np.minimum(y_true, y_pred).sum(axis = 1)/np.maximum(y_true, y_pred).sum(axis = 1)
-    return jaccard.mean()*100
+# ### OneVsRestClassifier
+# def train_model(classifier,X, y, max_feature = 1000, embedding= 'bow' ):
 
+#     #Train-test split
+#     print("... Performing train test split")
+#     X_train, X_test, y_train, y_test = model_selection.train_test_split(X,y,
+#                                                                     test_size=0.25,random_state=42)
+    
+#     ## Features extraction with word embedding
+#     print("... Extracting features")
+#     Xv_train, Xv_test, vectorizer = get_embeddings(X_train, X_test,
+#                                                           max_feature = max_feature , embedding_type= embedding)
+    
+#     # train the model 
+#     print('... Training {} model'.format(classifier.__class__.__name__))
+#     clf = OneVsRestClassifier(classifier)
+#     clf.fit(Xv_train, y_train)
 
-# In[30]:
+#     # compute the test accuracy
+#     print("... Computing accuracy")
+#     prediction = clf.predict(Xv_test)
 
+#     ## Accuracy score
+#     score = (accuracy_score(y_test, prediction))
+#     type2_score = j_score(y_test, prediction)
+#     f1_s = f1_score(y_test, prediction,average='macro')
+#     roc_auc = roc_auc_score(y_test, prediction)
+#     confusion_matrix = multilabel_confusion_matrix(y_test, prediction)
+#     score_sumry = [score, type2_score, f1_s, roc_auc]
+    
+    
+#     ## Save model
+#     print("... Saving model in model directory")
+#     pkl_file = os.path.join(dir_path,'model', classifier.__class__.__name__)
+#     file = open(pkl_file,"wb")
+#     pickle.dump(clf,file)
+#     file.close()
+    
+#     #### Testing purpose only #### 
+#     #### Prediction on comment ### 
 
-def print_score(y_pred, y_test, clf):
-    print("Clf: ",clf.__class__.__name__)
-    print("Jaccard score: {}".format(j_score(pd.DataFrame(y_test), pd.DataFrame(y_pred))))
-    print("F1 Score : {}".format(f1_score(y_test, y_pred,average='macro')))
+#     input_str = ["i'm going to kill you nigga, you are you sick or mad, i don't like you at all"]
+#     input_str = clean(input_str[0])
+#     input_str = process_txt(input_str, stemm= True)
+#     input_str = vectorizer.transform([input_str])
+    
+
+#     print('\n')
+#     print("Model evaluation")
+#     print("------")
+#     print(print_score(prediction,y_test, classifier))
+#     print('Accuracy is {}'.format(score))
+#     print("ROC_AUC - {}".format(roc_auc))
+#     print(print("check model accuracy on input_string {}".format(clf.predict(input_str))))
+#     print("------")
+#     print("Multilabel confusion matrix \n {}".format(confusion_matrix))
+    
+#     return clf, vectorizer, score_sumry
     
 
 
-# ### Training
+# ## Model Training
 
-# In[31]:
-
-
-### OneVsRestClassifier
-def train_model(classifier,X, y, max_feature = 1000, embedding= 'bow' ):
-
-    #Train-test split
-    print("... Performing train test split")
-    X_train, X_test, y_train, y_test = model_selection.train_test_split(X,y,
-                                                                    test_size=0.25,random_state=42)
-    
-    ## Features extraction with word embedding
-    print("... Extracting features")
-    Xv_train, Xv_test, vectorizer = get_embeddings(X_train, X_test,
-                                                          max_feature = max_feature , embedding_type= embedding)
-    
-    # train the model 
-    print('... Training {} model'.format(classifier.__class__.__name__))
-    clf = OneVsRestClassifier(classifier)
-    clf.fit(Xv_train, y_train)
-
-    # compute the test accuracy
-    print("... Computing accuracy")
-    prediction = clf.predict(Xv_test)
-
-    ## Accuracy score
-    score = (accuracy_score(y_test, prediction))
-    type2_score = j_score(y_test, prediction)
-    f1_s = f1_score(y_test, prediction,average='macro')
-    roc_auc = roc_auc_score(y_test, prediction)
-    confusion_matrix = multilabel_confusion_matrix(y_test, prediction)
-    score_sumry = [score, type2_score, f1_s, roc_auc]
-    
-    
-    ## Save model
-    print("... Saving model in model directory")
-    pkl_file = os.path.join(dir_path,'model', classifier.__class__.__name__)
-    file = open(pkl_file,"wb")
-    pickle.dump(clf,file)
-    file.close()
-    
-    #### Testing purpose only #### 
-    #### Prediction on comment ### 
-
-    input_str = ["i'm going to kill you nigga, you are you sick or mad, i don't like you at all"]
-    input_str = clean(input_str[0])
-    input_str = process_txt(input_str, stemm= True)
-    input_str = vectorizer.transform([input_str])
-    
-
-    print('\n')
-    print("Model evaluation")
-    print("------")
-    print(print_score(prediction,y_test, classifier))
-    print('Accuracy is {}'.format(score))
-    print("ROC_AUC - {}".format(roc_auc))
-    print(print("check model accuracy on input_string {}".format(clf.predict(input_str))))
-    print("------")
-    print("Multilabel confusion matrix \n {}".format(confusion_matrix))
-    
-    return clf, vectorizer, score_sumry
-    
-
-
-# ### Initiate models
-
-# In[32]:
-
-
-n_bayes = naive_bayes.MultinomialNB()
-logreg = LogisticRegression(solver='sag')
-
-
-# #### Train with simple Train-Test split
+# 1. Logistics Regression
+# 2. Naive Bayes (NB)
+# 
 
 # Which model to use?
 # <br>
 # Which is the fastest model for high dimensional sparse data?  - **Logistic regression**
 # We will use Logistic regression for this dataset to start with and the solver we are using is 'sag' as it is faster for large datsets.
+# 
+# <br>
+# ## logistic Regression
+# 
+# The underlying algorithm is also fairly easy to understand. More importantly, in the NLP world, it’s generally accepted that Logistic Regression is a great starter algorithm for text related classification (https://web.stanford.edu/~jurafsky/slp3/5.pdf).
+# 
+# How hypothesis makes prediction in logistics regression?
+# 
+# This algorithm uses sigmoid function(g(z)). If we want to predict y=1 or y=0. If estimated probability of y=1 is h(x)>=0.5 then the ouput is more likely to be "y=1" but if h(x) < 0.5, the output is more likely to be is "y=0".
+
+# ### Initiate models
+
+# In[12]:
+
+
+logreg = LogisticRegression(solver='sag')
+
 
 # In[56]:
 
 
 lr_clf, lr_vectorizer, lr_sumry = train_model(logreg, corpus, df[labels])
 
+
+# ### Logistic Regression Results
 
 # In[58]:
 
@@ -252,66 +202,51 @@ summary_lr = pd.DataFrame(lr_sumry, index = ['accuracy', 'jaccard score', 'F1_sc
 summary_lr
 
 
+# ### Naive Bayes
+# Well, when assumption of independence holds, a Naive Bayes classifier performs better compare to other models like logistic regression and you need less training data. An advantage of naive Bayes is that it only requires a small number of training data to estimate the parameters necessary for classification.
+# <br>
+# Bayes’ Theorem provides a way that we can calculate the probability of a piece of data belonging to a given class, given our prior knowledge. Bayes’ Theorem is stated as:
+# <br>
+# P(class|data) = (P(data|class) * P(class)) / P(data)
+# <br>
+# Where P(class|data) is the probability of class given the provided data.
+# <br>
+# Naive Bayes is a classification algorithm for binary (two-class) and multiclass classification problems. It is called Naive Bayes or idiot Bayes because the calculations of the probabilities for each class are simplified to make their calculations tractable.
+# <br>
+# Rather than attempting to calculate the probabilities of each attribute value, they are assumed to be conditionally independent given the class value.
+# <br>
+# This is a very strong assumption that is most unlikely in real data, i.e. that the attributes do not interact. Nevertheless, the approach performs surprisingly well on data where this assumption does not hold.
+# <br>
+# <br>
+# Multinomial NB
+# <br>
+# The multinomial Naive Bayes classifier is suitable for classification with discrete features (e.g., word counts for text classification). The multinomial distribution normally requires integer feature counts. However, in practice, fractional counts such as tf-idf may also work
+
 # <br>**Naive Bayes** is quite populer with text data problems. It learns the parameters by looking at each feature individually and collect simple per-class stats from each feature.
 # We are going to use MultinomialNB because it assumes count data, that means, each feature represents an integer count of some-thing, in our problem- how often a word appears in a sentence.
 
-# In[36]:
+# ### Initiate models
+
+# In[15]:
+
+
+n_bayes = naive_bayes.MultinomialNB()
+
+
+# In[16]:
 
 
 nb_clf, nb_vectorizer, nb_sumry = train_model(n_bayes, corpus, df[labels] )
 
 
-# In[51]:
+# ### Naive Bayes Results
+
+# In[17]:
 
 
 summary_nb = pd.DataFrame(nb_sumry, index = ['accuracy', 'jaccard score', 'F1_score', 'roc_score'], columns= [nb_clf.estimators_[0]])
 summary_nb
 
-
-# <br>
-# Lets do testing on unseen data
-
-# In[52]:
-
-
-input_str = ["that is so good, i am so happy bitch"]
-input_str = clean(input_str[0])
-input_str = process_txt(input_str, stemm= True)
-input_str = nb_vectorizer.transform([input_str])
-input_str
-
-
-# In[53]:
-
-
-### Open the saved mode.pkl
-pkl_file = os.path.join(dir_path, 'model', 'MultinomialNB')
-open_file = open(pkl_file, "rb")
-model = pickle.load(open_file)
-open_file.close()
-
-
-# In[54]:
-
-
-model
-
-
-# In[55]:
-
-
-model.predict(input_str)
-
-
-# # Check if it needs to stay here
-# **`Bag-of-Words` and `TF-IDF`**
-# <br>Accuracies for `Bag-of-Words` and `TF-IDF` are not same but their difference is also not very significant for both Linear regression and Naive Bayes 
-# <br>Accuracy remained same - `Identity hate`, `threat`
-# <br>Accuracy remained almost same - `Severe_toxic`
-# <br>Accuracy improved little bit  with the use of TF-IDF but not very significant change for `Toxic`, `Obscene`, `insult`.
-# One possible reason for not seeing the expected significant improvement with the use of `TF-IDF` could be - the human raters didn't care for the semantics of the sentances and rated the comment based on the presence of toxic words.
-# In this case, we will choose `Bag-of-Words` because the performance is almost same as `TF-IDF` but less chance of overfitting.
-# 
 
 # **Naive Bayes or Logistic regression !!**
 # <br>Compairing the confusion matrixs and Jaccard score, Naive Bayes clearly out performed Linear regression and Naive Bayes even tends to get trained faster.
@@ -319,7 +254,7 @@ model.predict(input_str)
 
 # ### K FOLD CROSS VALIDATION
 
-# #### K Fold cross validation with Gridsearch for Logistic Regression 
+# #### Logistic Regression - K Fold cross validation with Gridsearch
 
 # We will use GridSearchCV to evaluate the model using different values of **C**
 
@@ -381,13 +316,9 @@ print("Best estimator is : {}".format(gs_lr.best_estimator_))
 
 
 # <br>
-# As we can see that *Logistic Regression* performed well with **C = 0.1**. on 3 Folds of cross validation. We will use this value with the various combination of *maximum_features* and *embedding type* in next part to check the performance of *Logistic Regression*
+# As we can see that *Logistic Regression* performed well with **C = 0.1**. on 3 Folds of cross validation. We will use this value of **C** with the various combination of *maximum_features* and *embedding type* in next part to check the performance of *Logistic Regression*
 
-# In[66]:
-
-
-#### Naive Bayes with K-fold cross validation
-
+# #### Naive Bayes - K-fold cross validation
 
 # In[68]:
 
@@ -436,6 +367,8 @@ print(summary_report)
 print(best_param)      
 
 
+# ### Performance Summary of all the Models Trained on different sets of Parameters
+
 # In[74]:
 
 
@@ -456,91 +389,83 @@ summary_all_combinations
 
 # ## Training the best model
 
-# In[34]:
-
-
-### OneVsRestClassifier
-def train_model(classifier,X, y, max_feature = 1000, embedding= 'bow' ):
-
-    #Train-test split
-    print("... Performing train test split")
-    X_train, X_test, y_train, y_test = model_selection.train_test_split(X,y,
-                                                                    test_size=0.25,random_state=42)
-    
-    ## Features extraction with word embedding
-    print("... Extracting features")
-    Xv_train, Xv_test, vectorizer = get_embeddings(X_train, X_test,
-                                                          max_feature = max_feature , embedding_type= embedding)
-    
-    # train the model 
-    print('... Training {} model'.format(classifier.__class__.__name__))
-    clf = OneVsRestClassifier(classifier)
-    clf.fit(Xv_train, y_train)
-
-    # compute the test accuracy
-    print("... Computing accuracy")
-    prediction = clf.predict(Xv_test)
-
-    ## Accuracy score
-    score = (accuracy_score(y_test, prediction))
-    type2_score = j_score(y_test, prediction)
-    f1_s = f1_score(y_test, prediction,average='macro')
-    roc_auc = roc_auc_score(y_test, prediction)
-    confusion_matrix = multilabel_confusion_matrix(y_test, prediction)
-    score_sumry = [score, type2_score, f1_s, roc_auc]
-
-     #### Prediction on comment 
-
-    input_str = ["i'm going to kill you nigga, you are you sick or mad, i don't like you at all"]
-    input_str = clean(input_str[0])
-    input_str = process_txt(input_str, stemm= True)
-    input_str = vectorizer.transform([input_str])
-    
-
-    print('\n')
-    print("Model evaluation")
-    print("------")
-    print(print_score(prediction,y_test, classifier))
-    print('Accuracy is {}'.format(score))
-    print("ROC_AUC - {}".format(roc_auc))
-    print(print("check model accuracy on input_string {}".format(clf.predict(input_str))))
-    print("------")
-    print("Multilabel confusion matrix \n {}".format(confusion_matrix))
-    
-    return clf, vectorizer, score_sumry
-    
-
-
-# In[35]:
+# In[18]:
 
 
 final_clf, final_vectorizer , model_summary = train_model(n_bayes, corpus, df[labels], max_feature=2000, embedding= "bow")
 
 
-# In[36]:
+# In[24]:
 
 
 ## Save model
 print("...Saving model in model directory")
-pkl_file = os.path.join(dir_path,'model', 'final_model.pkl')
+pkl_file = os.path.join(dir_path,'model', 'final_model1.pkl')
 file = open(pkl_file,"wb")
 pickle.dump(final_clf,file)
 file.close()
+print("...Saved model in model directory")
     
 
 
-# In[37]:
+# In[25]:
 
 
 ## Save vectorizer
 print("...Saving vectorizer in model directory")
-pkl_file = os.path.join(dir_path,'model', 'final_vectorizer.pkl')
+pkl_file = os.path.join(dir_path,'model', 'final_vectorizer1.pkl')
 file = open(pkl_file,"wb")
 pickle.dump(final_vectorizer,file)
 file.close()
+print("...Saved vectorizer in model directory")
 
 
 # ### Ignore below part
+
+# <br>
+# Lets do testing on unseen data
+
+# In[52]:
+
+
+input_str = ["that is so good, i am so happy bitch"]
+input_str = clean(input_str[0])
+input_str = process_txt(input_str, stemm= True)
+input_str = nb_vectorizer.transform([input_str])
+input_str
+
+
+# In[53]:
+
+
+### Open the saved mode.pkl
+pkl_file = os.path.join(dir_path, 'model', 'MultinomialNB')
+open_file = open(pkl_file, "rb")
+model = pickle.load(open_file)
+open_file.close()
+
+
+# In[54]:
+
+
+model
+
+
+# In[55]:
+
+
+model.predict(input_str)
+
+
+# # Check if it needs to stay here
+# **`Bag-of-Words` and `TF-IDF`**
+# <br>Accuracies for `Bag-of-Words` and `TF-IDF` are not same but their difference is also not very significant for both Linear regression and Naive Bayes 
+# <br>Accuracy remained same - `Identity hate`, `threat`
+# <br>Accuracy remained almost same - `Severe_toxic`
+# <br>Accuracy improved little bit  with the use of TF-IDF but not very significant change for `Toxic`, `Obscene`, `insult`.
+# One possible reason for not seeing the expected significant improvement with the use of `TF-IDF` could be - the human raters didn't care for the semantics of the sentances and rated the comment based on the presence of toxic words.
+# In this case, we will choose `Bag-of-Words` because the performance is almost same as `TF-IDF` but less chance of overfitting.
+# 
 
 # ### Stratified K Fold Cross Validation
 

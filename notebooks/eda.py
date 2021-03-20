@@ -258,11 +258,3 @@ pd.crosstab(df.toxic,df.identity_hate,margins=True).style.background_gradient(cm
 # <br> Here out of 1405 identity hate comments, 103 comments are not toxic. 
 # <br> After observing this category of comments, I could assume that - Identity hate comments targets race, color, religion, community etc. So for a comment to be qualified under this category doesn't have to use vulgar or foul words.
 # 
-
-# <br>Toxic - 
-# <br>Severe toxic - those comments which have highly vulger
-# <br>Obscene - comments with a negativity but no use of curse words or I can say soft toxic
-# <br>Threat - 
-# <br>Insult - 
-# <br>Identity_hate - 
-#  
