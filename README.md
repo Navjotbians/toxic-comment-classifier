@@ -122,7 +122,7 @@ Project has **5 main sub-directories:**
 
 * <b>Model Evaluation</b>
   <br>
-  For model evaluation *stratified K-fold* cross validation in conjuction with *F1-score* and *Jaccard score* is used.
+  For model evaluation *K-fold* cross validation in conjuction with *F1-score* and *Jaccard score* is used.
 
 * <b>Inference</b>
   <br>
