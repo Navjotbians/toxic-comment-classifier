@@ -18,7 +18,7 @@ vectorizer = pickle.load(open(vec_file, 'rb'))
 @app.route('/')
 
 def home():
-	return render_template('form.html', p = "")
+	return render_template('form0.html', p = "")
 
 
 @app.route('/', methods = ['POST'])
