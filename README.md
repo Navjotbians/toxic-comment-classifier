@@ -12,6 +12,10 @@ Sharp increase in hateful comments on the farmers who are protesting at the outs
 ### Goal
 To build a Multi-label Multiclass Classification model capable of detecting different level of toxicity like severe toxic, threats, obscenity, insults, and so on for each comment. 
 
+## Deployment 
+Model is deployed on Heroku
+<br> [Click here](https://classifier-toxic-comment.herokuapp.com/) to run the app
+
 ## Getting started
 Let's start by cloning the repository by running below command in cmd
 <br><br> `git clone https://github.com/Navjotbians/toxic-comment-classifier.git`
@@ -31,8 +35,8 @@ Start importing these necessary packages. If you have not installed these packag
 <br>`pip install git+http://github.com/scikit-learn/scikit-learn.git`
 
 
-To run web application type the below command in the terminal.
-<br> `python app.py`
+## Run Flask Web Application
+<br> Type the below command in the terminal. `python app.py`
 <br> This server uses [http://127.0.0.1:13000/](http://127.0.0.1:13000/) address.
 
 ## Project structure
