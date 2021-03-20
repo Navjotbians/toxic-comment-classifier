@@ -39,7 +39,7 @@ Start importing these necessary packages. If you have not installed these packag
 Type the below command in the terminal. `python app.py`
 <br> This server uses [http://127.0.0.1:13000/](http://127.0.0.1:13000/) address.
 
-## Project structure
+## Project Structure
 Project has **5 main sub-directories:** 
 * `data/`: Contains `raw/` and `processed/` subdirectories. `raw/` dir contain `training data` and `processed/` dir  is where we store the processed data, a copy of processed data is already saved in this folder. [Click here](https://drive.google.com/drive/folders/1gMJHNxCajYsRzMPjwUuPEM2S5tIp_b3r?usp=sharing) to download the `data ` folder,save it in the `Toxic Comment Classifier/` dir.
 * `model/`: Trained models are stored in this folder
@@ -128,7 +128,9 @@ Project has **5 main sub-directories:**
   <br>
   Trained `Multinomial` varient of `Naive Bayes` model is used to make the prediction on incomming comments.
   <br>
-  Its clear from training results that `Logistic Regression` perform well with continuous data (when features were computed with "TF-IDF") and *Naive Bayes* do good when data is in discrete form (When features were computer with "Bag-of Words"). Comparing *Jaccard score*, *F1-score*, and *ROC_AUC score* of these two model, we saw `Naive Bayes` performs well. Though, I am sure with further fine tuning of the hyper parameters on `Logistic Regression`, we could get a good model but its is quite expensive in terms of computations and time to get comparable outcome to `Naive Bayes`. So, I choose to go with **Naive Bayes** using *"Bag-of-Words"* embedding technique with *max_features* count as 2000. `Multinomial` varient of `Naive Bayes` model is used because it assumes count data, that means, each feature represents an integer count of some-thing, in our use case it is count of words.
+  <br>
+  Its clear from training results that `Logistic Regression` perform well with continuous data (when features were computed with "TF-IDF") and *Naive Bayes* do good when data is in discrete form (When features were computer with "Bag-of Words"). Comparing *Jaccard score*, *F1-score*, and *ROC_AUC score* of these two model, we saw `Naive Bayes` performs well. Though, I am sure with further fine tuning of the hyper parameters on `Logistic Regression`, we could get a good model but its is quite expensive in terms of computations and time to get comparable outcome to `Naive Bayes`. So, I choose to go with **Naive Bayes** using *"Bag-of-Words"* embedding technique with *max_features* count as 2000.
+  <br> `Multinomial` varient of `Naive Bayes` model is used because it assumes count data, that means, each feature represents an integer count of some-thing, in our use case it is count of words.
 
 * <b>End product</b>
   <br>
