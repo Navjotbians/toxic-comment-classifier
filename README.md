@@ -36,7 +36,7 @@ Start importing these necessary packages. If you have not installed these packag
 
 
 ## Run Flask Web Application
-<br> Type the below command in the terminal. `python app.py`
+Type the below command in the terminal. `python app.py`
 <br> This server uses [http://127.0.0.1:13000/](http://127.0.0.1:13000/) address.
 
 ## Project structure
