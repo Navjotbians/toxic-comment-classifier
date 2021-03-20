@@ -122,7 +122,8 @@ Project has **5 main sub-directories:**
 
 * <b>Model Evaluation</b>
   <br>
-  For model evaluation *K-fold* cross validation in conjuction with *F1-score* and *Jaccard score* is used.
+  Multi-label classification problems must be assessed using different performance measures than single-label classification problems.
+  So here *K-fold* cross validation in conjuction with *Jaccard score*, *F1-score* and *ROC_AUC score* is used.
 
 * <b>Inference</b>
   <br>
