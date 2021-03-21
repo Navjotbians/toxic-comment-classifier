@@ -5,14 +5,14 @@
 
 # ## Import all the required packages
 
-# In[8]:
+# In[1]:
 
 
 import os
 dir_path = os.path.dirname(os.getcwd())
 
 
-# In[21]:
+# In[2]:
 
 
 from sklearn.model_selection import StratifiedKFold
@@ -29,32 +29,32 @@ import pickle
 
 # ## Load Processed Dataset
 
-# In[10]:
+# In[3]:
 
 
 processed_data = os.path.join(dir_path, 'data', 'processed', 'processed_stem_data.csv')
 
 
-# In[11]:
+# In[4]:
 
 
 df = pd.read_csv(processed_data)
 
 
-# In[12]:
+# In[5]:
 
 
 df.head()
 
 
-# In[13]:
+# In[6]:
 
 
 ### fill NA for any missing data 
 df['comment_text'].fillna("missing", inplace=True)
 
 
-# In[14]:
+# In[7]:
 
 
 labels = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
@@ -90,77 +90,16 @@ corpus = df['comment_text']
 # ## Matrix used to evaluate the models
 
 # Multi-label classification problems must be assessed using different performance measures than single-label classification problems.
-
-# Jaccard similarity, or the Jaccard index, is the size of the intersection of the predicted labels and the true labels divided by the size of the union of the predicted and true labels. It ranges from 0 to 1, and 1 is the perfect score.Here we are taking mean so 100 is perfect score. This function can be imported from *Sklearn.metrics* but just to have better usderstanding we are defining the `j_score` function
-
+# <br>
+# <br>
+# Jaccard similarity, or the Jaccard index, is the size of the intersection of the predicted labels and the true labels divided by the size of the union of the predicted and true labels. It ranges from 0 to 1, and 1 is the perfect score.Here we are taking mean so 100 is perfect score. This function can be imported from *Sklearn.metrics* but just to have better usderstanding we are defining the `j_score` function.
+# <br>
+# <br>
 # We will also look at *F1-score* and *ROC score*
-
-# In[4]:
-
-
-# ### OneVsRestClassifier
-# def train_model(classifier,X, y, max_feature = 1000, embedding= 'bow' ):
-
-#     #Train-test split
-#     print("... Performing train test split")
-#     X_train, X_test, y_train, y_test = model_selection.train_test_split(X,y,
-#                                                                     test_size=0.25,random_state=42)
-    
-#     ## Features extraction with word embedding
-#     print("... Extracting features")
-#     Xv_train, Xv_test, vectorizer = get_embeddings(X_train, X_test,
-#                                                           max_feature = max_feature , embedding_type= embedding)
-    
-#     # train the model 
-#     print('... Training {} model'.format(classifier.__class__.__name__))
-#     clf = OneVsRestClassifier(classifier)
-#     clf.fit(Xv_train, y_train)
-
-#     # compute the test accuracy
-#     print("... Computing accuracy")
-#     prediction = clf.predict(Xv_test)
-
-#     ## Accuracy score
-#     score = (accuracy_score(y_test, prediction))
-#     type2_score = j_score(y_test, prediction)
-#     f1_s = f1_score(y_test, prediction,average='macro')
-#     roc_auc = roc_auc_score(y_test, prediction)
-#     confusion_matrix = multilabel_confusion_matrix(y_test, prediction)
-#     score_sumry = [score, type2_score, f1_s, roc_auc]
-    
-    
-#     ## Save model
-#     print("... Saving model in model directory")
-#     pkl_file = os.path.join(dir_path,'model', classifier.__class__.__name__)
-#     file = open(pkl_file,"wb")
-#     pickle.dump(clf,file)
-#     file.close()
-    
-#     #### Testing purpose only #### 
-#     #### Prediction on comment ### 
-
-#     input_str = ["i'm going to kill you nigga, you are you sick or mad, i don't like you at all"]
-#     input_str = clean(input_str[0])
-#     input_str = process_txt(input_str, stemm= True)
-#     input_str = vectorizer.transform([input_str])
-    
-
-#     print('\n')
-#     print("Model evaluation")
-#     print("------")
-#     print(print_score(prediction,y_test, classifier))
-#     print('Accuracy is {}'.format(score))
-#     print("ROC_AUC - {}".format(roc_auc))
-#     print(print("check model accuracy on input_string {}".format(clf.predict(input_str))))
-#     print("------")
-#     print("Multilabel confusion matrix \n {}".format(confusion_matrix))
-    
-#     return clf, vectorizer, score_sumry
-    
-
 
 # ## Model Training
 
+# ### Models we are using for text classification
 # 1. Logistics Regression
 # 2. Naive Bayes (NB)
 # 
@@ -168,16 +107,14 @@ corpus = df['comment_text']
 # Which model to use?
 # <br>
 # Which is the fastest model for high dimensional sparse data?  - **Logistic regression**
-# We will use Logistic regression for this dataset to start with and the solver we are using is 'sag' as it is faster for large datsets.
+# <br>We will use Logistic regression for this dataset to start with and the solver we are using is 'sag' as it is faster for large datsets.
 # 
-# <br>
-# ## logistic Regression
+
+# ### Logistic Regression
 # 
-# The underlying algorithm is also fairly easy to understand. More importantly, in the NLP world, it’s generally accepted that Logistic Regression is a great starter algorithm for text related classification (https://web.stanford.edu/~jurafsky/slp3/5.pdf).
+# Logistic regression is similar to `Linear Regression` except it predicts whether something is **True** or **False**, instead of predicting a continuous value. Also instead of fitting a line to the data it fits an **"S"** shaped "logistic function" which is called `sigmoid function`.
+# <br> In `Logistic Regression ` we don't need to do much to classify an instance. All we have to do is calculate the sigmoid of the vectorunder test multiplied by the weights optimized. If sigmoid gives a value greater than 0.5 the class is 1 and it is 0 otherwise.
 # 
-# How hypothesis makes prediction in logistics regression?
-# 
-# This algorithm uses sigmoid function(g(z)). If we want to predict y=1 or y=0. If estimated probability of y=1 is h(x)>=0.5 then the ouput is more likely to be "y=1" but if h(x) < 0.5, the output is more likely to be is "y=0".
 
 # ### Initiate models
 
@@ -198,42 +135,32 @@ lr_clf, lr_vectorizer, lr_sumry = train_model(logreg, corpus, df[labels])
 # In[58]:
 
 
-summary_lr = pd.DataFrame(lr_sumry, index = ['accuracy', 'jaccard score', 'F1_score', 'roc_score'], columns= [lr_clf.estimators_[0]])
+summary_lr = pd.DataFrame(lr_sumry, index = ['accuracy', 'jaccard score', 'F1_score', 'roc_score'], 
+                          columns= [lr_clf.estimators_[0]])
 summary_lr
 
 
+# <br>
 # ### Naive Bayes
-# Well, when assumption of independence holds, a Naive Bayes classifier performs better compare to other models like logistic regression and you need less training data. An advantage of naive Bayes is that it only requires a small number of training data to estimate the parameters necessary for classification.
-# <br>
-# Bayes’ Theorem provides a way that we can calculate the probability of a piece of data belonging to a given class, given our prior knowledge. Bayes’ Theorem is stated as:
-# <br>
-# P(class|data) = (P(data|class) * P(class)) / P(data)
-# <br>
-# Where P(class|data) is the probability of class given the provided data.
-# <br>
-# Naive Bayes is a classification algorithm for binary (two-class) and multiclass classification problems. It is called Naive Bayes or idiot Bayes because the calculations of the probabilities for each class are simplified to make their calculations tractable.
-# <br>
-# Rather than attempting to calculate the probabilities of each attribute value, they are assumed to be conditionally independent given the class value.
-# <br>
-# This is a very strong assumption that is most unlikely in real data, i.e. that the attributes do not interact. Nevertheless, the approach performs surprisingly well on data where this assumption does not hold.
-# <br>
-# <br>
-# Multinomial NB
-# <br>
-# The multinomial Naive Bayes classifier is suitable for classification with discrete features (e.g., word counts for text classification). The multinomial distribution normally requires integer feature counts. However, in practice, fractional counts such as tf-idf may also work
 
-# <br>**Naive Bayes** is quite populer with text data problems. It learns the parameters by looking at each feature individually and collect simple per-class stats from each feature.
-# We are going to use MultinomialNB because it assumes count data, that means, each feature represents an integer count of some-thing, in our problem- how often a word appears in a sentence.
+# It is a classifier under supervised ML group based on probalistic logic. Probabilistic logic it uses is  `Bayes Theorem`  which gives probability of an event based on prior knowledge of condition that might be related to event
+# <br>
+# <br>
+# **P(Class|Features) :**  $$\frac{P(Features|Class) * P(Class)}{P(Features)}$$ 
+# It assumes that the probability of a one word doesn't depends on any other word in the document. We know this is unrealistic. That's why it is known as `naive Bayes`. Despite of its incorrect assumptions, `naive Bayes` is effective at classification. 
+# <br>Moreover, assuming conditional independence among the features in the dataset, it reduces the need of large training data.
+# #### Multinomial NB
+# In our use case we will be using this `Multinomial NB` because it assumes count data which means each feature represents an integer count of some-thing, in our problem it is that how often a word appears in a sentence.
 
 # ### Initiate models
 
-# In[15]:
+# In[8]:
 
 
 n_bayes = naive_bayes.MultinomialNB()
 
 
-# In[16]:
+# In[43]:
 
 
 nb_clf, nb_vectorizer, nb_sumry = train_model(n_bayes, corpus, df[labels] )
@@ -241,18 +168,20 @@ nb_clf, nb_vectorizer, nb_sumry = train_model(n_bayes, corpus, df[labels] )
 
 # ### Naive Bayes Results
 
-# In[17]:
+# In[44]:
 
 
-summary_nb = pd.DataFrame(nb_sumry, index = ['accuracy', 'jaccard score', 'F1_score', 'roc_score'], columns= [nb_clf.estimators_[0]])
+summary_nb = pd.DataFrame(nb_sumry, index = ['accuracy', 'jaccard score', 'F1_score', 'roc_score'],
+                          columns= [nb_clf.estimators_[0]])
 summary_nb
 
 
+# <br>
 # **Naive Bayes or Logistic regression !!**
 # <br>Compairing the confusion matrixs and Jaccard score, Naive Bayes clearly out performed Linear regression and Naive Bayes even tends to get trained faster.
 # Just yet we can't decide, we need to try different model evaluation techniqes first.
 
-# ### K FOLD CROSS VALIDATION
+# ### K FOLD Cross Validation
 
 # #### Logistic Regression - K Fold cross validation with Gridsearch
 
@@ -285,22 +214,22 @@ Xv_train, Xv_test, vectorizer = get_embeddings(X_train, X_test,
 # In[14]:
 
 
-## Uncomment to reproduce results
-# clf_lr = OneVsRestClassifier(logreg)
+# Uncomment to reproduce results
+clf_lr = OneVsRestClassifier(logreg)
 
 
 # In[15]:
 
 
-## Uncomment to reproduce results
-# gs_lr = GridSearchCV(clf_lr, param_grid ,scoring = 'f1_micro', cv=3)
+# Uncomment to reproduce results
+gs_lr = GridSearchCV(clf_lr, param_grid ,scoring = 'f1_micro', cv=3)
 
 
 # In[25]:
 
 
-## Uncomment to run GridSerch with K-fold cross validation
-# gs_lr.fit(Xv_train, y_train)
+# Uncomment to run GridSerch with K-fold cross validation
+gs_lr.fit(Xv_train, y_train)
 
 
 # In[26]:
@@ -316,8 +245,9 @@ print("Best estimator is : {}".format(gs_lr.best_estimator_))
 
 
 # <br>
-# As we can see that *Logistic Regression* performed well with **C = 0.1**. on 3 Folds of cross validation. We will use this value of **C** with the various combination of *maximum_features* and *embedding type* in next part to check the performance of *Logistic Regression*
+# As we can see that *Logistic Regression* performed well with **C = 0.1** on 3 Folds of cross validation. We will use this value of **C** with the various combination of *maximum_features* and *embedding types* in next part to check the performance of *Logistic Regression* during the best model selection process
 
+# <br>
 # #### Naive Bayes - K-fold cross validation
 
 # In[68]:
@@ -343,6 +273,8 @@ classifier = [logreg, n_bayes]
 max_feature = [1200, 1500, 1700, 2000]
 embedding= ['bow', 'tfidf']
 
+
+# #### Training models with all different combinations of the parameters stated in above cell
 
 # In[73]:
 
@@ -389,22 +321,33 @@ summary_all_combinations
 
 # ## Training the best model
 
-# In[18]:
+# In[9]:
 
 
 final_clf, final_vectorizer , model_summary = train_model(n_bayes, corpus, df[labels], max_feature=2000, embedding= "bow")
 
 
-# In[24]:
+# ### Best Model Results
+
+# In[46]:
+
+
+summary_best_model = pd.DataFrame(model_summary, index = ['accuracy', 'jaccard score', 'F1_score', 'roc_score'],
+                          columns= [final_clf.estimators_[0]])
+summary_best_model
+
+
+# ### Save Model
+
+# In[48]:
 
 
 ## Save model
-print("...Saving model in model directory")
-pkl_file = os.path.join(dir_path,'model', 'final_model1.pkl')
+pkl_file = os.path.join(dir_path,'model', 'final_model.pkl')
 file = open(pkl_file,"wb")
 pickle.dump(final_clf,file)
 file.close()
-print("...Saved model in model directory")
+print("...Model saved in model directory")
     
 
 
@@ -413,7 +356,7 @@ print("...Saved model in model directory")
 
 ## Save vectorizer
 print("...Saving vectorizer in model directory")
-pkl_file = os.path.join(dir_path,'model', 'final_vectorizer1.pkl')
+pkl_file = os.path.join(dir_path,'model', 'final_vectorizer.pkl')
 file = open(pkl_file,"wb")
 pickle.dump(final_vectorizer,file)
 file.close()

@@ -72,27 +72,3 @@ if len(predc)== 0:
 else:
     print("Prediction : {}".format(" | ".join(predc)))
 
-
-# In[1]:
-
-
-from sklearn import preprocessing
-
-
-# In[2]:
-
-
-import sklearn
-
-
-# In[5]:
-
-
-print(sklearn.__version__)
-
-
-# In[2]:
-
-
-preprocessing._label
-
